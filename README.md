@@ -3,8 +3,8 @@
 ## scripts:
 Windows remap escape & autohotkey transparency script
 
-## neovim scripts:
-neovim init
+## nvim :
+neovim config
 
 ## TODO:
 - automate with batch scripts
