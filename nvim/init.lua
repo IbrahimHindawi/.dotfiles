@@ -27,6 +27,19 @@ vim.call('plug#end')
 
 require('packer').startup(function(use)
     use {'nyoom-engineering/oxocarbon.nvim'}
+    -- Lua
+    use {
+      "folke/which-key.nvim",
+      config = function()
+        vim.o.timeout = true
+        vim.o.timeoutlen = 300
+        require("which-key").setup {
+          -- your configuration comes here
+          -- or leave it empty to use the default settings
+          -- refer to the configuration section below
+        }
+      end
+}
 end)
 
 -- USER
@@ -61,7 +74,7 @@ lspconfig.clangd.setup{
       client.server_capabilities.semanticTokensProvider = nil
     end,
 }
--- lspconfig.zls.setup{}
+lspconfig.zls.setup{}
 --[[
 " note that if you are using Plug mapping you should not use `noremap` mappings.
 nmap <F5> <Plug>(lcn-menu)
