@@ -44,7 +44,7 @@ end)
 
 -- USER
 -- -----------------------------------------------------------------
-vim.cmd('source ginit.vim')
+vim.cmd('source '..vim.fn.stdpath("config")..'/ginit.vim')
 vim.cmd('colorscheme oxocarbon')
 vim.cmd('set expandtab')
 vim.cmd('set guifont=Consolas:h8')
