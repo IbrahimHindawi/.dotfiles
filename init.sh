@@ -1,5 +1,6 @@
 #!/bin/bash
 mkdir ~/.config/nvim
+cp .bashrc ~
 cp nvim/ginit.vim ~/.config/nvim
 cp nvim/init.lua ~/.config/nvim
 
@@ -8,3 +9,7 @@ git clone --depth 1 https://github.com/wbthomason/packer.nvim\
 
 sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+
+cd ..
+source .bashrc
+cd .dotfiles
