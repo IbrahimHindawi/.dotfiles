@@ -26,6 +26,7 @@ vim.call('plug#begin', '~/vimfiles/autoload')
 vim.call('plug#end')
 
 require('packer').startup(function(use)
+    use {'wbthomason/packer.nvim'}
     use {'nyoom-engineering/oxocarbon.nvim'}
     -- Lua
     use {
@@ -76,6 +77,7 @@ lspconfig.clangd.setup{
     end,
 }
 lspconfig.zls.setup{}
+lspconfig.tsserver.setup{}
 --[[
 " note that if you are using Plug mapping you should not use `noremap` mappings.
 nmap <F5> <Plug>(lcn-menu)
