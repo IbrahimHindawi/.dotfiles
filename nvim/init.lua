@@ -28,6 +28,7 @@ vim.call('plug#end')
 require('packer').startup(function(use)
     use {'wbthomason/packer.nvim'}
     use {'nyoom-engineering/oxocarbon.nvim'}
+    use {'dgagn/diagflow.nvim'}
     -- Lua
     use {
       "folke/which-key.nvim",
@@ -66,18 +67,24 @@ vim.cmd('map <C-k> <C-e>')
 -- leader remap
 vim.cmd('nnoremap <SPACE> <Nop>')
 vim.cmd('let mapleader=" "')
+vim.cmd('set shell=powershell.exe')
+vim.opt.shell = 'powershell'
+vim.opt.shellcmdflag = '-nologo -noprofile -ExecutionPolicy RemoteSigned -command'
+vim.opt.shellxquote = ''
 
 -- LSP
 -- -----------------------------------------------------------------
 local lspconfig = require('lspconfig')
 lspconfig.pyright.setup{}
 lspconfig.clangd.setup{
+    -- filetypes = {"c", "h"},
     on_attach = function(client, bufnr)
       client.server_capabilities.semanticTokensProvider = nil
     end,
 }
 lspconfig.zls.setup{}
 lspconfig.tsserver.setup{}
+lspconfig.asm_lsp.setup{}
 --[[
 " note that if you are using Plug mapping you should not use `noremap` mappings.
 nmap <F5> <Plug>(lcn-menu)
@@ -94,6 +101,29 @@ vim.cmd('nnoremap <silent> K <cmd>lua vim.lsp.buf.hover()<CR>')
 -- vim.cmd('nnoremap <silent> <C-k> <cmd>lua vim.lsp.buf.signature_help()<CR>')
 vim.cmd('nnoremap <silent> <C-p> <cmd>lua vim.lsp.buf.goto_prev()<CR>')
 vim.cmd('nnoremap <silent> <C-n> <cmd>lua vim.lsp.buf.goto_next()<CR>')
+
+-- DiagFlow
+-- -----------------------------------------------------------------
+require('diagflow').setup({
+    enable = true,
+    max_width = 100,  -- The maximum width of the diagnostic messages
+    max_height = 20, -- the maximum height per diagnostics
+    severity_colors = {  -- The highlight groups to use for each diagnostic severity level
+        error = "DiagnosticFloatingError",
+        warning = "DiagnosticFloatingWarn",
+        info = "DiagnosticFloatingInfo",
+        hint = "DiagnosticFloatingHint",
+    },
+    text_align = 'right',
+    placement = 'top',
+    show_borders = true
+})
+
+-- camelCase to snake_case
+-- function c2s()
+    -- vim.cmd([===[s//\=substitute(submatch(0),'[a-z]\@<=[A-Z]','_\l\0','g')/g]===])
+-- end
+vim.api.nvim_create_user_command('CamelCase2SnakeCase', [===========[%s//\=substitute(submatch(0),'[a-z]\@<=[A-Z]','_\l\0','g')/g]===========], {})
 
 -- CMP
 -- -----------------------------------------------------------------

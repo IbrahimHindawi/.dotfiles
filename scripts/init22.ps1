@@ -3,6 +3,7 @@ cmd /c "VsDevCmd.bat&set" |
 foreach {
   if ($_ -match "=") {
     $v = $_.split("=", 2); set-item -force -path "ENV:\$($v[0])"  -value "$($v[1])" 
+    Write-Host $v
   }
 }
 popd
