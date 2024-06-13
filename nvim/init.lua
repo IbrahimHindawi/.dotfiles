@@ -18,6 +18,7 @@ vim.call('plug#begin', '~/vimfiles/autoload')
     Plug 'hrsh7th/cmp-cmdline'
     Plug 'hrsh7th/cmp-vsnip'
     Plug 'hrsh7th/vim-vsnip'
+    Plug 'mfussenegger/nvim-jdtls'
 
     Plug 'nvim-lua/plenary.nvim'
     Plug 'nvim-telescope/telescope.nvim'
