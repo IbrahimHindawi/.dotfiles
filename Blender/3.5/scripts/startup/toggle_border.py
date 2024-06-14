@@ -2,11 +2,17 @@ import bpy
 
 def main(context):
     meshprops = bpy.data.window_managers["WinMan"].mesh_check_props
+    bpy.ops.mesh.select_all(action='SELECT')
+    bpy.ops.mesh.mark_seam(clear=True)
+    bpy.ops.mesh.select_all(action='DESELECT')
+    bpy.ops.mesh.select_non_manifold()
+    bpy.ops.mesh.mark_seam(clear=False)
+    bpy.ops.mesh.select_all(action='DESELECT')
 
-    if meshprops.show_overlay == True:
-        meshprops.show_overlay = False
-    else:
-        meshprops.show_overlay = True
+    # if meshprops.show_overlay == True:
+    #     meshprops.show_overlay = False
+    # else:
+    #     meshprops.show_overlay = True
 
 
 class ToggleBorder(bpy.types.Operator):
@@ -42,4 +48,4 @@ if __name__ == "__main__":
     register()
 
     # test call
-    # bpy.ops.object.toggle_border()
+    bpy.ops.object.toggle_border()
