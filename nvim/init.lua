@@ -2,10 +2,11 @@
 -- -----------------------------------------------------------------
 local Plug = vim.fn['plug#']
 vim.call('plug#begin', '~/vimfiles/autoload')
-    Plug 'vim-airline/vim-airline'
     Plug 'folke/tokyonight.nvim'
     Plug 'sainnhe/gruvbox-material'
     Plug 'tikhomirov/vim-glsl'
+    Plug 'nvim-lualine/lualine.nvim'
+    Plug 'nvim-tree/nvim-web-devicons'
 
     Plug 'ktunprasert/gui-font-resize.nvim'
 
@@ -18,9 +19,11 @@ vim.call('plug#begin', '~/vimfiles/autoload')
     Plug 'hrsh7th/cmp-cmdline'
     Plug 'hrsh7th/cmp-vsnip'
     Plug 'hrsh7th/vim-vsnip'
+    Plug 'xiantang/darcula-dark.nvim'
 
     Plug 'nvim-lua/plenary.nvim'
     Plug 'nvim-telescope/telescope.nvim'
+    Plug 'ziglang/zig.vim'
 
     Plug 'savq/melange-nvim'
 vim.call('plug#end')
@@ -47,7 +50,7 @@ end)
 -- USER
 -- -----------------------------------------------------------------
 vim.cmd('source '..vim.fn.stdpath("config")..'/ginit.vim')
-vim.cmd('colorscheme oxocarbon')
+vim.cmd('colorscheme gruvbox-material')
 vim.cmd('set expandtab')
 vim.cmd('set guifont=Consolas:h8')
 vim.cmd('set nowrap')
@@ -82,9 +85,53 @@ lspconfig.clangd.setup{
       client.server_capabilities.semanticTokensProvider = nil
     end,
 }
-lspconfig.zls.setup{}
+lspconfig.zls.setup{
+    cmd = { '\\zig\\zls\\zls.exe' }
+}
 lspconfig.tsserver.setup{}
 lspconfig.asm_lsp.setup{}
+-- LUALINE
+-- -----------------------------------------------------------------
+require('lualine').setup {
+  options = {
+    icons_enabled = true,
+    theme = 'auto',
+    component_separators = { left = '', right = ''},
+    section_separators = { left = '', right = ''},
+    disabled_filetypes = {
+      statusline = {},
+      winbar = {},
+    },
+    ignore_focus = {},
+    always_divide_middle = true,
+    globalstatus = false,
+    refresh = {
+      statusline = 1000,
+      tabline = 1000,
+      winbar = 1000,
+    }
+  },
+  sections = {
+    lualine_a = {'mode'},
+    lualine_b = {'branch', 'diff', 'diagnostics'},
+    lualine_c = {'filename'},
+    lualine_x = {'encoding', 'fileformat', 'filetype'},
+    lualine_y = {'progress'},
+    lualine_z = {'location'}
+  },
+  inactive_sections = {
+    lualine_a = {},
+    lualine_b = {},
+    lualine_c = {'filename'},
+    lualine_x = {'location'},
+    lualine_y = {},
+    lualine_z = {}
+  },
+  tabline = {},
+  winbar = {},
+  inactive_winbar = {},
+  extensions = {}
+}
 --[[
 " note that if you are using Plug mapping you should not use `noremap` mappings.
 nmap <F5> <Plug>(lcn-menu)
