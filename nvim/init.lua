@@ -1,59 +1,70 @@
--- NEOVIM config
--- -----------------------------------------------------------------
-local Plug = vim.fn['plug#']
-vim.call('plug#begin', '~/vimfiles/autoload')
-    Plug 'folke/tokyonight.nvim'
-    Plug 'sainnhe/gruvbox-material'
-    Plug 'tikhomirov/vim-glsl'
-    Plug 'nvim-lualine/lualine.nvim'
-    Plug 'nvim-tree/nvim-web-devicons'
+-- Bootstrap lazy.nvim
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+  local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+  local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+  if vim.v.shell_error ~= 0 then
+    vim.api.nvim_echo({
+      { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
+      { out, "WarningMsg" },
+      { "\nPress any key to exit..." },
+    }, true, {})
+    vim.fn.getchar()
+    os.exit(1)
+  end
+end
+vim.opt.rtp:prepend(lazypath)
 
-    Plug 'ktunprasert/gui-font-resize.nvim'
+-- Make sure to setup `mapleader` and `maplocalleader` before
+-- loading lazy.nvim so that mappings are correct.
+-- This is also a good place to setup other settings (vim.opt)
+vim.g.mapleader = " "
+vim.g.maplocalleader = "\\"
 
-    Plug 'nvim-treesitter/nvim-treesitter'
-    Plug 'neovim/nvim-lspconfig'
-    Plug 'hrsh7th/nvim-cmp'
-    Plug 'hrsh7th/cmp-nvim-lsp'
-    Plug 'hrsh7th/cmp-buffer'
-    Plug 'hrsh7th/cmp-path'
-    Plug 'hrsh7th/cmp-cmdline'
-    Plug 'hrsh7th/cmp-vsnip'
-    Plug 'hrsh7th/vim-vsnip'
-    Plug 'xiantang/darcula-dark.nvim'
+-- Setup lazy.nvim
+require("lazy").setup({
+  spec = {
+    'folke/tokyonight.nvim',
+    'sainnhe/gruvbox-material',
+    'tikhomirov/vim-glsl',
+    'nvim-lualine/lualine.nvim',
+    'nvim-tree/nvim-web-devicons',
 
-    Plug 'nvim-lua/plenary.nvim'
-    Plug 'nvim-telescope/telescope.nvim'
-    Plug 'ziglang/zig.vim'
+    'ktunprasert/gui-font-resize.nvim',
 
-    Plug 'savq/melange-nvim'
-vim.call('plug#end')
+    'nvim-treesitter/nvim-treesitter',
+    'neovim/nvim-lspconfig',
+    'hrsh7th/nvim-cmp',
+    'hrsh7th/cmp-nvim-lsp',
+    'hrsh7th/cmp-buffer',
+    'hrsh7th/cmp-path',
+    'hrsh7th/cmp-cmdline',
+    'hrsh7th/cmp-vsnip',
+    'hrsh7th/vim-vsnip',
+    'xiantang/darcula-dark.nvim',
+    'bluz71/vim-moonfly-colors',
 
-require('packer').startup(function(use)
-    use {'wbthomason/packer.nvim'}
-    use {'nyoom-engineering/oxocarbon.nvim'}
-    use {'dgagn/diagflow.nvim'}
-    -- Lua
-    use {
-      "folke/which-key.nvim",
-      config = function()
-        vim.o.timeout = true
-        vim.o.timeoutlen = 300
-        require("which-key").setup {
-          -- your configuration comes here
-          -- or leave it empty to use the default settings
-          -- refer to the configuration section below
-        }
-      end
-}
-end)
+    'nvim-lua/plenary.nvim',
+    'nvim-telescope/telescope.nvim',
+    'ziglang/zig.vim',
+
+    'savq/melange-nvim',
+    'folke/which-key.nvim',
+  },
+  -- Configure any other settings here. See the documentation for more details.
+  -- colorscheme that will be used when installing plugins.
+  install = { colorscheme = { "habamax" } },
+  -- automatically check for plugin updates
+  checker = { enabled = true },
+})
 
 -- USER
 -- -----------------------------------------------------------------
 vim.cmd('source '..vim.fn.stdpath("config")..'/ginit.vim')
 vim.cmd('colorscheme gruvbox-material')
-vim.cmd('set expandtab')
 vim.cmd('set guifont=Consolas:h8')
 vim.cmd('set nowrap')
+vim.cmd('set expandtab')
 vim.cmd('set tabstop=4')
 vim.cmd('set shiftwidth=4')
 vim.cmd('autocmd BufNewFile,BufRead *.asm set ft=masm')
@@ -67,6 +78,7 @@ vim.cmd('set cursorline')
 -- scrolling remap
 vim.cmd('map <C-j> <C-y>')
 vim.cmd('map <C-k> <C-e>')
+vim.cmd('map <F2> :ClangdSwitchSourceHeader<CR>')
 -- leader remap
 vim.cmd('nnoremap <SPACE> <Nop>')
 vim.cmd('let mapleader=" "')
@@ -74,22 +86,57 @@ vim.cmd('set shell=powershell.exe')
 vim.opt.shell = 'powershell'
 vim.opt.shellcmdflag = '-nologo -noprofile -ExecutionPolicy RemoteSigned -command'
 vim.opt.shellxquote = ''
+-- vim.keymap.set('n', '<C-i>', vim.diagnostic.goto_prev)
+-- vim.keymap.set('n', '<C-o>', vim.diagnostic.goto_next)
 
 -- LSP
 -- -----------------------------------------------------------------
 local lspconfig = require('lspconfig')
+-- lspconfig.on_server_ready(function(server)
+--     local opts = {},
+--     server:setup(opts)
+-- end)
 lspconfig.pyright.setup{}
 lspconfig.clangd.setup{
-    -- filetypes = {"c", "h"},
-    on_attach = function(client, bufnr)
-      client.server_capabilities.semanticTokensProvider = nil
-    end,
+    cmd = {
+        "clangd",
+        -- "--function-arg-placeholders"
+    },
+    filetypes = {"c", "h"},
+    -- on_init = function(client, initialization_result)
+    --     if client.server_capabilities then
+    --         client.server_capabilities.documentFormattingProvider = false
+    --         client.server_capabilities.semanticTokensProvider = false
+    --     end
+    -- end,
+    -- on_attach = function(client, bufnr)
+    --     client.server_capabilities.semanticTokensProvider = nil
+    -- end,
 }
 lspconfig.zls.setup{
     cmd = { '\\zig\\zls\\zls.exe' }
 }
 lspconfig.tsserver.setup{}
 lspconfig.asm_lsp.setup{}
+
+-- TREE
+-- -----------------------------------------------------------------
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = { "c", "lua", "python" },
+  sync_install = false,
+  auto_install = true,
+    -- on_attach = function(client, bufnr)
+    --   client.server_capabilities.semanticTokensProvider = nil
+    -- end,
+  highlight = {
+    enable = true,
+    -- additional_vim_regex_highlighting = false,
+  },
+  indent = { 
+      enable = false 
+  },
+}
+
 -- LUALINE
 -- -----------------------------------------------------------------
 require('lualine').setup {
@@ -151,20 +198,20 @@ vim.cmd('nnoremap <silent> <C-n> <cmd>lua vim.lsp.buf.goto_next()<CR>')
 
 -- DiagFlow
 -- -----------------------------------------------------------------
-require('diagflow').setup({
-    enable = true,
-    max_width = 100,  -- The maximum width of the diagnostic messages
-    max_height = 20, -- the maximum height per diagnostics
-    severity_colors = {  -- The highlight groups to use for each diagnostic severity level
-        error = "DiagnosticFloatingError",
-        warning = "DiagnosticFloatingWarn",
-        info = "DiagnosticFloatingInfo",
-        hint = "DiagnosticFloatingHint",
-    },
-    text_align = 'right',
-    placement = 'top',
-    show_borders = true
-})
+-- require('diagflow').setup({
+--     enable = true,
+--     max_width = 100,  -- The maximum width of the diagnostic messages
+--     max_height = 20, -- the maximum height per diagnostics
+--     severity_colors = {  -- The highlight groups to use for each diagnostic severity level
+--         error = "DiagnosticFloatingError",
+--         warning = "DiagnosticFloatingWarn",
+--         info = "DiagnosticFloatingInfo",
+--         hint = "DiagnosticFloatingHint",
+--     },
+--     text_align = 'right',
+--     placement = 'top',
+--     show_borders = true
+-- })
 
 -- camelCase to snake_case
 -- function c2s()
@@ -230,41 +277,6 @@ sources = cmp.config.sources({
 -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
 -- require('lspconfig')['clangd'].setup { capabilities = capabilities }
 -- require('lspconfig')['pyright'].setup { capabilities = capabilities }
-
--- TREE
--- -----------------------------------------------------------------
-require'nvim-treesitter.configs'.setup {
-  -- A list of parser names, or "all" (the five listed parsers should always be installed)
-  ensure_installed = { "c", "lua", "python" },
-  -- Install parsers synchronously (only applied to `ensure_installed`)
-  sync_install = false,
-  -- Automatically install missing parsers when entering buffer
-  -- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
-  auto_install = true,
-  -- List of parsers to ignore installing (for "all")
-  ignore_install = { "javascript" },
-  ---- If you need to change the installation directory of the parsers (see -> Advanced Setup)
-  -- parser_install_dir = "/some/path/to/store/parsers", -- Remember to run vim.opt.runtimepath:append("/some/path/to/store/parsers")!
-    on_attach = function(client, bufnr)
-      client.server_capabilities.semanticTokensProvider = nil
-    end,
-  highlight = {
-    enable = true,
-    -- Or use a function for more flexibility, e.g. to disable slow treesitter highlight for large files
-    disable = function(lang, buf)
-        local max_filesize = 100 * 1024 -- 100 KB
-        local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-        if ok and stats and stats.size > max_filesize then
-            return true
-        end
-    end,
-    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
-    -- Using this option may slow down your editor, and you may see some duplicate highlights.
-    -- Instead of true it can also be a list of languages
-    additional_vim_regex_highlighting = false,
-  },
-}
 
 -- TELESCOPE
 -- -----------------------------------------------------------------
