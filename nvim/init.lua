@@ -30,6 +30,16 @@ require("lazy").setup({
     'nvim-lualine/lualine.nvim',
     'nvim-tree/nvim-web-devicons',
 
+    {
+        'nvim-neo-tree/neo-tree.nvim',
+        branch = "v3.x",
+        dependencies = {
+          "nvim-lua/plenary.nvim",
+          "nvim-tree/nvim-web-devicons",
+          "MunifTanjim/nui.nvim",
+        }
+    },
+
     'ktunprasert/gui-font-resize.nvim',
 
     'nvim-treesitter/nvim-treesitter',
@@ -62,7 +72,7 @@ require("lazy").setup({
 -- -----------------------------------------------------------------
 vim.cmd('source '..vim.fn.stdpath("config")..'/ginit.vim')
 vim.cmd('colorscheme gruvbox-material')
-vim.cmd('set guifont=Consolas:h8')
+-- vim.cmd('set guifont=Consolas:h8')
 vim.cmd('set nowrap')
 vim.cmd('set expandtab')
 vim.cmd('set tabstop=4')
@@ -82,10 +92,13 @@ vim.cmd('map <F2> :ClangdSwitchSourceHeader<CR>')
 -- leader remap
 vim.cmd('nnoremap <SPACE> <Nop>')
 vim.cmd('let mapleader=" "')
-vim.cmd('set shell=powershell.exe')
-vim.opt.shell = 'powershell'
-vim.opt.shellcmdflag = '-nologo -noprofile -ExecutionPolicy RemoteSigned -command'
-vim.opt.shellxquote = ''
+vim.filetype.add({
+    extension = {
+        h = 'c'
+    }
+})
+-- vim.cmd('nmap <leader>t :Neotree reveal left<CR>')
+vim.keymap.set('n', '<leader>tt', ':Neotree reveal left<CR>')
 -- vim.keymap.set('n', '<C-i>', vim.diagnostic.goto_prev)
 -- vim.keymap.set('n', '<C-o>', vim.diagnostic.goto_next)
 
@@ -116,8 +129,9 @@ lspconfig.clangd.setup{
 lspconfig.zls.setup{
     cmd = { '\\zig\\zls\\zls.exe' }
 }
-lspconfig.tsserver.setup{}
+lspconfig.ts_ls.setup{}
 lspconfig.asm_lsp.setup{}
+lspconfig.glsl_analyzer.setup{}
 
 -- TREE
 -- -----------------------------------------------------------------
