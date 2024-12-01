@@ -99,6 +99,7 @@ vim.filetype.add({
 })
 -- vim.cmd('nmap <leader>t :Neotree reveal left<CR>')
 vim.keymap.set('n', '<leader>tt', ':Neotree reveal left<CR>')
+vim.keymap.set('n', '<leader>tq', ':Neotree close<CR>')
 -- vim.keymap.set('n', '<C-i>', vim.diagnostic.goto_prev)
 -- vim.keymap.set('n', '<C-o>', vim.diagnostic.goto_next)
 
