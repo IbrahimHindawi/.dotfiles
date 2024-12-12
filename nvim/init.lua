@@ -71,7 +71,6 @@ require("lazy").setup({
 
 -- USER
 -- -----------------------------------------------------------------
-vim.cmd('source '..vim.fn.stdpath("config")..'/ginit.vim')
 vim.cmd('colorscheme gruvbox-material')
 -- vim.cmd('set guifont=Consolas:h8')
 vim.cmd('set nowrap')
