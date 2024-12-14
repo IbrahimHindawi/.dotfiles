@@ -24,12 +24,25 @@ vim.g.maplocalleader = "\\"
 -- Setup lazy.nvim
 require("lazy").setup({
   spec = {
-    'folke/tokyonight.nvim',
-    'sainnhe/gruvbox-material',
-    'tikhomirov/vim-glsl',
     'nvim-lualine/lualine.nvim',
     'nvim-tree/nvim-web-devicons',
+    'folke/tokyonight.nvim',
+    'sainnhe/gruvbox-material',
+    'rebelot/kanagawa.nvim',
+    'NTBBloodbath/doom-one.nvim',
+    'xiantang/darcula-dark.nvim',
+    'bluz71/vim-moonfly-colors',
+    'savq/melange-nvim',
+    'EdenEast/nightfox.nvim',
+    'nyoom-engineering/oxocarbon.nvim',
 
+    {
+      "startup-nvim/startup.nvim",
+      dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim", "nvim-telescope/telescope-file-browser.nvim" },
+      config = function()
+        require "startup".setup()
+      end
+    },
     {
         'nvim-neo-tree/neo-tree.nvim',
         branch = "v3.x",
@@ -43,6 +56,7 @@ require("lazy").setup({
     'ktunprasert/gui-font-resize.nvim',
 
     'nvim-treesitter/nvim-treesitter',
+    'nvim-treesitter/nvim-treesitter-context',
     'neovim/nvim-lspconfig',
     'hrsh7th/nvim-cmp',
     'hrsh7th/cmp-nvim-lsp',
@@ -51,14 +65,12 @@ require("lazy").setup({
     'hrsh7th/cmp-cmdline',
     'hrsh7th/cmp-vsnip',
     'hrsh7th/vim-vsnip',
-    'xiantang/darcula-dark.nvim',
-    'bluz71/vim-moonfly-colors',
+    'tikhomirov/vim-glsl',
 
     'nvim-lua/plenary.nvim',
     'nvim-telescope/telescope.nvim',
     'ziglang/zig.vim',
 
-    'savq/melange-nvim',
     'folke/which-key.nvim',
   },
   -- Configure any other settings here. See the documentation for more details.
@@ -70,8 +82,7 @@ require("lazy").setup({
 
 -- USER
 -- -----------------------------------------------------------------
-vim.cmd('source '..vim.fn.stdpath("config")..'/ginit.vim')
-vim.cmd('colorscheme gruvbox-material')
+vim.cmd('colorscheme carbonfox')
 -- vim.cmd('set guifont=Consolas:h8')
 vim.cmd('set nowrap')
 vim.cmd('set expandtab')
@@ -97,10 +108,15 @@ vim.filetype.add({
         h = 'c'
     }
 })
--- vim.cmd('nmap <leader>t :Neotree reveal left<CR>')
+
+function openinit()
+    vim.cmd('edit ' .. vim.fn.stdpath('config') .. '/init.lua')
+end
+
 vim.keymap.set('n', '<leader>tt', ':Neotree reveal left<CR>')
--- vim.keymap.set('n', '<C-i>', vim.diagnostic.goto_prev)
--- vim.keymap.set('n', '<C-o>', vim.diagnostic.goto_next)
+vim.keymap.set('n', '<leader>tq', ':Neotree close<CR>')
+vim.keymap.set('n', '<leader>c', openinit)
+
 
 -- LSP
 -- -----------------------------------------------------------------
@@ -115,7 +131,7 @@ lspconfig.clangd.setup{
         "clangd",
         -- "--function-arg-placeholders"
     },
-    filetypes = {"c", "h"},
+    filetypes = {"c", "h", "cpp"},
     -- on_init = function(client, initialization_result)
     --     if client.server_capabilities then
     --         client.server_capabilities.documentFormattingProvider = false
