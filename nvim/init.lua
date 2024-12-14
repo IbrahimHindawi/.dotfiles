@@ -82,7 +82,11 @@ require("lazy").setup({
 
 -- USER
 -- -----------------------------------------------------------------
+<<<<<<< HEAD
 vim.cmd('colorscheme carbonfox')
+=======
+vim.cmd('colorscheme gruvbox-material')
+>>>>>>> af503243555039b54dac3d3142673435b1fd9dec
 -- vim.cmd('set guifont=Consolas:h8')
 vim.cmd('set nowrap')
 vim.cmd('set expandtab')
@@ -115,8 +119,13 @@ end
 
 vim.keymap.set('n', '<leader>tt', ':Neotree reveal left<CR>')
 vim.keymap.set('n', '<leader>tq', ':Neotree close<CR>')
+<<<<<<< HEAD
 vim.keymap.set('n', '<leader>c', openinit)
 
+=======
+-- vim.keymap.set('n', '<C-i>', vim.diagnostic.goto_prev)
+-- vim.keymap.set('n', '<C-o>', vim.diagnostic.goto_next)
+>>>>>>> af503243555039b54dac3d3142673435b1fd9dec
 
 -- LSP
 -- -----------------------------------------------------------------
@@ -165,6 +174,21 @@ require'nvim-treesitter.configs'.setup {
   indent = { 
       enable = false 
   },
+}
+require'treesitter-context'.setup{
+  enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
+  multiwindow = false, -- Enable multiwindow support.
+  max_lines = 0, -- How many lines the window should span. Values <= 0 mean no limit.
+  min_window_height = 0, -- Minimum editor window height to enable context. Values <= 0 mean no limit.
+  line_numbers = true,
+  multiline_threshold = 20, -- Maximum number of lines to show for a single context
+  trim_scope = 'outer', -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
+  mode = 'cursor',  -- Line used to calculate context. Choices: 'cursor', 'topline'
+  -- Separator between context and content. Should be a single character string, like '-'.
+  -- When separator is set, the context will only show up when there are at least 2 lines above cursorline.
+  separator = nil,
+  zindex = 20, -- The Z-index of the context window
+  on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
 }
 
 -- LUALINE
