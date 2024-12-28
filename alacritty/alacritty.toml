@@ -1,4 +1,5 @@
-terminal.shell = "cmd"
+[terminal]
+shell = "cmd"
 [window]
 dimensions = {columns = 178, lines = 30}
 [font]
