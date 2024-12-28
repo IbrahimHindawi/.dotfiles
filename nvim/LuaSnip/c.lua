@@ -14,13 +14,24 @@ return {
   -- A snippet that expands the trigger "hi" into the string "Hello, world!".
   require("luasnip").snippet(
     { trig = "hi" },
-    { t("Hello, world!") }
+    { t("Hello, World!\n") }
   ),
 
-  -- To return multiple snippets, use one `return` statement per snippet file
-  -- and return a table of Lua snippets.
   require("luasnip").snippet(
-    { trig = "foo" },
-    { t("Another snippet.") }
+    { trig = "structdef" },
+    {
+        -- t({"typedef struct S S;", "struct S {", "};"})
+        t("typedef struct "), i(1), t(" "), rep(1), t({";",
+        "struct "}), rep(1), t({" {",
+        "};"})
+        -- fmta(
+        --     [[
+        --         typedef struct <> <>;
+        --         struct <> {
+        --         };
+        --     ]],
+        --     { i(1), rep(1), rep(1) }
+        -- )
+    }
   ),
 }

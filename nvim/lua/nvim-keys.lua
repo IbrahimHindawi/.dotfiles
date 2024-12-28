@@ -4,9 +4,16 @@ vim.cmd('set expandtab')
 vim.cmd('set tabstop=4')
 vim.cmd('set shiftwidth=4')
 vim.cmd('autocmd BufNewFile,BufRead *.asm set ft=masm')
-vim.cmd('map <F5> :!scripts\\build.bat -c<CR>')
+vim.keymap.set('n', '<leader>c', '', {desc = 'Compile'})
+vim.cmd('map <F5> :!scripts\\build.bat -c<cr>')
+vim.keymap.set('n', '<leader>cc', ':!scripts\\build.bat -c<CR>', {desc = 'Compile'})
 vim.cmd('map <F6> :!scripts\\build.bat -cr<CR>')
-vim.cmd('map <F11> :!scripts\\build.bat -s<CR>')
+vim.keymap.set('n', '<leader>cb', ':!scripts\\build.bat -b<CR>', {desc = 'Build'})
+vim.keymap.set('n', '<leader>cr', ':!scripts\\build.bat -cr<CR>', {desc = 'Compile & Run'})
+vim.keymap.set('n', '<leader>cm', '', {desc = 'Meta'})
+vim.keymap.set('n', '<leader>cmb', ':!scripts\\build.bat -mb<CR>', {desc = 'Meta Build'})
+vim.keymap.set('n', '<leader>cmc', ':!scripts\\build.bat -mc<CR>', {desc = 'Meta Compile'})
+-- vim.cmd('map <F11> :!scripts\\build.bat -s<CR>')
 vim.cmd('nmap <C-l> :tabnext<CR>')
 vim.cmd('nmap <C-h> :tabprev<CR>')
 vim.cmd('set signcolumn=yes')
@@ -32,7 +39,8 @@ function OpenInit()
 end
 vim.keymap.set('n', '<leader>tt', ':Neotree reveal left<CR>')
 vim.keymap.set('n', '<leader>tq', ':Neotree close<CR>')
-vim.keymap.set('n', '<leader>c', OpenInit)
+vim.keymap.set('n', '<leader>q', OpenInit, {desc = "Open Config"})
+vim.keymap.set('n', '<leader>t', '', {desc = "Neotree"})
 
 -- lsp
 vim.cmd('nnoremap <silent> gd <cmd>lua vim.lsp.buf.definition()<CR>')
@@ -49,3 +57,22 @@ vim.cmd('nnoremap <silent> <C-n> <cmd>lua vim.lsp.buf.goto_next()<CR>')
     -- vim.cmd([===[s//\=substitute(submatch(0),'[a-z]\@<=[A-Z]','_\l\0','g')/g]===])
 -- end
 vim.api.nvim_create_user_command('CamelCase2SnakeCase', [===========[%s//\=substitute(submatch(0),'[a-z]\@<=[A-Z]','_\l\0','g')/g]===========], {})
+-- Load snippets from ~/.config/nvim/LuaSnip/
+vim.cmd[[
+" Use Tab to expand and jump through snippets
+imap <silent><expr> <Tab> luasnip#expand_or_jumpable() ? '<Plug>luasnip-expand-or-jump' : '<Tab>' 
+smap <silent><expr> <Tab> luasnip#jumpable(1) ? '<Plug>luasnip-jump-next' : '<Tab>'
+
+" Use Shift-Tab to jump backwards through snippets
+imap <silent><expr> <S-Tab> luasnip#jumpable(-1) ? '<Plug>luasnip-jump-prev' : '<S-Tab>'
+smap <silent><expr> <S-Tab> luasnip#jumpable(-1) ? '<Plug>luasnip-jump-prev' : '<S-Tab>'
+]]
+-- require("luasnip.loaders.from_lua").load({paths = "%USERPROFILE%/AppData/Local/nvim/LuaSnip/"})
+require("luasnip.loaders.from_lua").load({paths = "~/AppData/Local/nvim/LuaSnip/"})
+-- require("luasnip.loaders.from_lua").load({paths = "%USERPROFILE%\\AppData\\Local\\nvim\\LuaSnip\\"})
+-- require("luasnip.loaders.from_lua").load({paths = "~/.config/nvim/LuaSnip/"})
+-- Set up lspconfig.
+-- local capabilities = require('cmp_nvim_lsp').default_capabilities()
+-- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
+-- require('lspconfig')['clangd'].setup { capabilities = capabilities }
+-- require('lspconfig')['pyright'].setup { capabilities = capabilities }
