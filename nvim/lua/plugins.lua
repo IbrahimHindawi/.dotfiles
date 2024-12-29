@@ -22,15 +22,6 @@ return {
       require "startup".setup()
     end
   },
-  {
-      'nvim-neo-tree/neo-tree.nvim',
-      branch = "v3.x",
-      dependencies = {
-        "nvim-lua/plenary.nvim",
-        "nvim-tree/nvim-web-devicons",
-        "MunifTanjim/nui.nvim",
-      }
-  },
   'hrsh7th/cmp-nvim-lsp',
   'hrsh7th/cmp-buffer',
   'hrsh7th/cmp-path',

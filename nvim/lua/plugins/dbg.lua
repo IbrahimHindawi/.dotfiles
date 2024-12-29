@@ -25,6 +25,27 @@ return {
                 stopOnEntry = false,
             },
         }
+        -- dap.adapters.cppdbg = {
+        --     id = 'cppdbg',
+        --     type = 'executable',
+        --     command = 'C:\\ms-vscode.cpptools-1.23.2\\extension\\debugAdapters\\bin\\OpenDebugAD7.exe',
+        --     options = {
+        --         detached = false,
+        --     }
+        -- }
+        -- dap.configurations.c = {
+        --   {
+        --     name = "Launch file",
+        --     type = "cppdbg",
+        --     request = "launch",
+        --     program = function()
+        --       return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/build', 'file')
+        --     end,
+        --     cwd = '${workspaceFolder}',
+        --     stopAtEntry = true,
+        --   },
+        -- }
+        -- dap.configurations.c = dap.configurations.cpp
         dap.listeners.before.attach.dapui_config = function()
           dapui.open()
         end
