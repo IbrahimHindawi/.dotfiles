@@ -14,6 +14,7 @@ return {
   'Mofiqul/vscode.nvim',
   'ss77a/carbonfox.nvim',
 
+  'MeanderingProgrammer/render-markdown.nvim',
   'nvim-tree/nvim-web-devicons',
   {
     "startup-nvim/startup.nvim",
@@ -36,8 +37,12 @@ return {
 
   'nvim-lua/plenary.nvim',
   'ziglang/zig.vim',
-
+  'epwalsh/obsidian.nvim',
   'folke/which-key.nvim',
+
+  'williamboman/mason.nvim',
+  'williamboman/mason-lspconfig.nvim',
+  'neovim/nvim-lspconfig',
   -- Configure any other settings here. See the documentation for more details.
   -- colorscheme that will be used when installing plugins.
   install = { colorscheme = { "habamax" } },

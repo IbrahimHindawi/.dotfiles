@@ -14,7 +14,7 @@ return {
             "clangd",
             -- "--function-arg-placeholders"
         },
-        filetypes = {"c", "h", "cpp"},
+        filetypes = {"c", "h"},
         -- on_init = function(client, initialization_result)
         --     if client.server_capabilities then
         --         client.server_capabilities.documentFormattingProvider = false
