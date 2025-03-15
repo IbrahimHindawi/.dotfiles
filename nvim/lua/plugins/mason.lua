@@ -19,6 +19,7 @@ return {
                 'ts_ls',
                 'asm_lsp',
                 'glsl_analyzer',
+                'marksman',
             }
         })
     end

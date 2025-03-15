@@ -34,6 +34,10 @@ return {
   'tikhomirov/vim-glsl',
 
   'nvim-treesitter/nvim-treesitter-context',
+  {
+  'kevinhwang91/nvim-ufo',
+  dependencies = 'kevinhwang91/promise-async',
+  },
 
   'nvim-lua/plenary.nvim',
   'ziglang/zig.vim',
