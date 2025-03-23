@@ -1,8 +1,8 @@
 @echo off
-mkdir %USERPROFILE%\AppData\Local\nvim
-copy nvim\init.lua %USERPROFILE%\AppData\Local\nvim\init.lua
-xcopy nvim\lua %USERPROFILE%\AppData\Local\nvim\lua
-xcopy nvim\LuaSnip %USERPROFILE%\AppData\Local\nvim\LuaSnip
+set nvimdir=%USERPROFILE%\AppData\Local\nvim
+rmdir /S /Q %nvimdir%
+mkdir %nvimdir%
+xcopy /E nvim %nvimdir%
 
 mkdir %APPDATA%\alacritty
 copy alacritty\alacritty.toml %APPDATA%\alacritty
