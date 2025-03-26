@@ -6,21 +6,23 @@ vim.cmd('set shiftwidth=4')
 vim.cmd('autocmd BufNewFile,BufRead *.asm set ft=masm')
 ScriptType = ''
 ScriptName = ''
+Separator = '/'
 SystemName = vim.loop.os_uname().sysname
 if SystemName == 'Windows_NT' then
+    Separator = '\\'
     ScriptType = 'bat'
 else
     ScriptType = 'sh'
 end
-ScriptName = 'build.' .. ScriptType
+ScriptName = 'scripts' .. Separator .. 'build.' .. ScriptType
 vim.keymap.set('n', '<leader>c', '', {desc = 'Compile'})
-vim.keymap.set('n', '<leader>cc', ':!scripts/' .. ScriptName .. ' -c<CR>', {desc = 'Compile'})
-vim.keymap.set('n', '<leader>cb', ':!scripts/' .. ScriptName .. ' -b<CR>', {desc = 'Build'})
-vim.keymap.set('n', '<leader>cd', ':!scripts/' .. ScriptName .. ' -crd<CR>', {desc = 'Debug'})
-vim.keymap.set('n', '<leader>cr', ':!scripts/' .. ScriptName .. ' -cr<CR>', {desc = 'Compile & Run'})
+vim.keymap.set('n', '<leader>cc', ':!' .. ScriptName .. ' -c<CR>', {desc = 'Compile'})
+vim.keymap.set('n', '<leader>cb', ':!' .. ScriptName .. ' -b<CR>', {desc = 'Build'})
+vim.keymap.set('n', '<leader>cd', ':!' .. ScriptName .. ' -crd<CR>', {desc = 'Debug'})
+vim.keymap.set('n', '<leader>cr', ':!' .. ScriptName .. ' -cr<CR>', {desc = 'Compile & Run'})
 vim.keymap.set('n', '<leader>cm', '', {desc = 'Meta'})
-vim.keymap.set('n', '<leader>cmb', ':!scripts/' .. ScriptName .. ' -mb<CR>', {desc = 'Meta Build'})
-vim.keymap.set('n', '<leader>cmc', ':!scripts/' .. ScriptName .. ' -mc<CR>', {desc = 'Meta Compile'})
+vim.keymap.set('n', '<leader>cmb', ':!' .. ScriptName .. ' -mb<CR>', {desc = 'Meta Build'})
+vim.keymap.set('n', '<leader>cmc', ':!' .. ScriptName .. ' -mc<CR>', {desc = 'Meta Compile'})
 vim.keymap.set('n', '<leader>k', '', {desc = 'Code'})
 vim.keymap.set('n', '<leader>kk', ':lua vim.diagnostic.setqflist()<CR>', {desc = 'Quick Fix'})
 vim.keymap.set('n', '<leader>ka', ':lua vim.lsp.buf.code_action()<CR>', {desc = 'Code Action'})
