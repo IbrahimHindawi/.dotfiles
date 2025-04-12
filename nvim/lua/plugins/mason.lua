@@ -14,6 +14,7 @@ return {
         local masonlsp = require'mason-lspconfig'
         masonlsp.setup({
             ensure_installed = {
+                -- 'clangd',
                 'lua_ls',
                 'pyright',
                 'ts_ls',

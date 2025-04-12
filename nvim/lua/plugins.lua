@@ -31,7 +31,7 @@ return {
   'hrsh7th/vim-vsnip',
 
   'ktunprasert/gui-font-resize.nvim',
-  'tikhomirov/vim-glsl',
+  'romgrk/barbar.nvim',
 
   'nvim-treesitter/nvim-treesitter-context',
   {
@@ -40,6 +40,7 @@ return {
   },
 
   'nvim-lua/plenary.nvim',
+  'tikhomirov/vim-glsl',
   'ziglang/zig.vim',
   'epwalsh/obsidian.nvim',
   'folke/which-key.nvim',
