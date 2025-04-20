@@ -4,20 +4,28 @@ vim.cmd('set expandtab')
 vim.cmd('set tabstop=4')
 vim.cmd('set shiftwidth=4')
 vim.cmd('autocmd BufNewFile,BufRead *.asm set ft=masm')
+ScriptType = ''
+ScriptName = ''
+Separator = '/'
+SystemName = vim.loop.os_uname().sysname
+if SystemName == 'Windows_NT' then
+    Separator = '\\'
+    ScriptType = 'bat'
+else
+    ScriptType = 'sh'
+end
+ScriptName = 'scripts' .. Separator .. 'build.' .. ScriptType
 vim.keymap.set('n', '<leader>c', '', {desc = 'Compile'})
--- vim.cmd('map <F5> :!scripts\\build.bat -c<cr>')
-vim.keymap.set('n', '<leader>cc', ':!scripts\\build.bat -c<CR>', {desc = 'Compile'})
--- vim.cmd('map <F6> :!scripts\\build.bat -cr<CR>')
-vim.keymap.set('n', '<leader>cb', ':!scripts\\build.bat -b<CR>', {desc = 'Build'})
-vim.keymap.set('n', '<leader>cd', ':!scripts\\build.bat -crd<CR>', {desc = 'Debug'})
-vim.keymap.set('n', '<leader>cr', ':!scripts\\build.bat -cr<CR>', {desc = 'Compile & Run'})
+vim.keymap.set('n', '<leader>cc', ':!' .. ScriptName .. ' -c<CR>', {desc = 'Compile'})
+vim.keymap.set('n', '<leader>cb', ':!' .. ScriptName .. ' -b<CR>', {desc = 'Build'})
+vim.keymap.set('n', '<leader>cd', ':!' .. ScriptName .. ' -crd<CR>', {desc = 'Debug'})
+vim.keymap.set('n', '<leader>cr', ':!' .. ScriptName .. ' -cr<CR>', {desc = 'Compile & Run'})
 vim.keymap.set('n', '<leader>cm', '', {desc = 'Meta'})
-vim.keymap.set('n', '<leader>cmb', ':!scripts\\build.bat -mb<CR>', {desc = 'Meta Build'})
-vim.keymap.set('n', '<leader>cmc', ':!scripts\\build.bat -mc<CR>', {desc = 'Meta Compile'})
+vim.keymap.set('n', '<leader>cmb', ':!' .. ScriptName .. ' -mb<CR>', {desc = 'Meta Build'})
+vim.keymap.set('n', '<leader>cmc', ':!' .. ScriptName .. ' -mc<CR>', {desc = 'Meta Compile'})
 vim.keymap.set('n', '<leader>k', '', {desc = 'Code'})
 vim.keymap.set('n', '<leader>kk', ':lua vim.diagnostic.setqflist()<CR>', {desc = 'Quick Fix'})
 vim.keymap.set('n', '<leader>ka', ':lua vim.lsp.buf.code_action()<CR>', {desc = 'Code Action'})
--- vim.cmd('map <F11> :!scripts\\build.bat -s<CR>')
 vim.cmd('nmap <C-l> :tabnext<CR>')
 vim.cmd('nmap <C-h> :tabprev<CR>')
 vim.cmd('set signcolumn=yes')
@@ -73,7 +81,7 @@ smap <silent><expr> <S-Tab> luasnip#jumpable(-1) ? '<Plug>luasnip-jump-prev' : '
 ]]
 -- require("luasnip.loaders.from_lua").load({paths = "%USERPROFILE%/AppData/Local/nvim/LuaSnip/"})
 require("luasnip.loaders.from_lua").load({paths = "~/AppData/Local/nvim/LuaSnip/"})
--- require("luasnip.loaders.from_lua").load({paths = "%USERPROFILE%\\AppData\\Local\\nvim\\LuaSnip\\"})
+-- require("luasnip.loaders.from_lua").load({paths = "%USERPROFILE%/AppData/Local/nvim/LuaSnip/"})
 -- require("luasnip.loaders.from_lua").load({paths = "~/.config/nvim/LuaSnip/"})
 -- Set up lspconfig.
 -- local capabilities = require('cmp_nvim_lsp').default_capabilities()
