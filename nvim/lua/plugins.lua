@@ -1,4 +1,4 @@
--- plugins are added here
+-- plugins are added hereon
 -- if plugin needs config, it would be better to
 -- place it under lua/plugins/pluginname.lua
 return {
@@ -31,7 +31,7 @@ return {
   'hrsh7th/vim-vsnip',
 
   'ktunprasert/gui-font-resize.nvim',
-  'romgrk/barbar.nvim',
+  'tikhomirov/vim-glsl',
 
   'nvim-treesitter/nvim-treesitter-context',
   {
@@ -40,7 +40,6 @@ return {
   },
 
   'nvim-lua/plenary.nvim',
-  'tikhomirov/vim-glsl',
   'ziglang/zig.vim',
   'epwalsh/obsidian.nvim',
   'folke/which-key.nvim',

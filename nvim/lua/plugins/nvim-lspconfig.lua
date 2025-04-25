@@ -1,6 +1,28 @@
 return {
   'neovim/nvim-lspconfig',
   config = function()
+    local mason = require'mason'
+    mason.setup({
+        ui = {
+            icons = {
+                package_installed = "✓",
+                package_pending = "➜",
+                package_uninstalled = "✗"
+            }
+        }
+    })
+    local masonlsp = require'mason-lspconfig'
+    masonlsp.setup({
+        ensure_installed = {
+            'lua_ls',
+            'pyright',
+            'ts_ls',
+            'asm_lsp',
+            'glsl_analyzer',
+            'marksman',
+        }
+    })
+    -- require "configs.lspconfig",
     local capabilities = require('cmp_nvim_lsp').default_capabilities()
     local lspconfig = require('lspconfig')
     -- lspconfig.on_server_ready(function(server)
@@ -8,14 +30,14 @@ return {
     --     server:setup(opts)
     -- end)
     lspconfig.pyright.setup{}
+    lspconfig.rust_analyzer.setup{}
     lspconfig.clangd.setup{
         capabilities = capabilities,
         cmd = {
             "clangd",
             -- "--function-arg-placeholders"
         },
-        -- filetypes = {"c", "h", "cpp"},
-        filetypes = {"c", "h", "cpp"},
+        filetypes = {"c", "h"},
         -- on_init = function(client, initialization_result)
         --     if client.server_capabilities then
         --         client.server_capabilities.documentFormattingProvider = false
