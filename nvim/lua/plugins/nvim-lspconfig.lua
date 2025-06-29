@@ -11,17 +11,24 @@ return {
             }
         }
     })
+    -- masonlsp.setup()
+    -- masonlsp.setup({
+    --     ensure_installed = {
+    --         'lua_ls',
+    --         'pyright',
+    --         'ts_ls',
+    --         'glsl_analyzer',
+    --         'marksman',
+    --     }
+    -- })
+    -- local masonlsp = require'mason-lspconfig',
+    -- 'mason-org/mason-lspconfig.nvim',
     local masonlsp = require'mason-lspconfig'
-    masonlsp.setup({
-        ensure_installed = {
-            'lua_ls',
-            'pyright',
-            'ts_ls',
-            'asm_lsp',
-            'glsl_analyzer',
-            'marksman',
-        }
-    })
+    opts = {}
+    dependencies = {
+        { 'mason-org/mason.nvim', opts = {} },
+        'neovim/nvim-lspconfig',
+    }
     -- require "configs.lspconfig",
     local capabilities = require('cmp_nvim_lsp').default_capabilities()
     local lspconfig = require('lspconfig')

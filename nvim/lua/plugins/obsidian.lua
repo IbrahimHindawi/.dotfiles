@@ -8,11 +8,14 @@ return {
         ft = "markdown",
         conceallevel = 2,
         ui = {
-          enable = false,
-          checkboxes = {
-              [" "] = { char = "☐", hl_group = "ObsidianTodo" },
-              ["x"] = { char = "✔", hl_group = "ObsidianDone" },
-          },
+            enable = false,
+            checkboxes = {
+                [" "] = { char = "󰄱", hl_group = "ObsidianTodo" },
+                ["x"] = { char = "", hl_group = "ObsidianDone" },
+                [">"] = { char = "", hl_group = "ObsidianRightArrow" },
+                ["~"] = { char = "󰰱", hl_group = "ObsidianTilde" },
+                ["!"] = { char = "", hl_group = "ObsidianImportant" },         
+            },
         },
         -- Replace the above line with this if you only want to load obsidian.nvim for markdown files in your vault:
         -- event = {
