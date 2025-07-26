@@ -6,9 +6,9 @@ return {
         version = "*",  -- recommended, use latest release instead of latest commit
         lazy = true,
         ft = "markdown",
-        conceallevel = 2,
+        -- conceallevel = 0,
         ui = {
-            enable = false,
+            enable = true,
             checkboxes = {
                 [" "] = { char = "󰄱", hl_group = "ObsidianTodo" },
                 ["x"] = { char = "", hl_group = "ObsidianDone" },
