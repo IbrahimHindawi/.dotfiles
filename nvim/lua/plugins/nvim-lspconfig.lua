@@ -56,7 +56,7 @@ return {
         -- end,
     }
     lspconfig.zls.setup{
-        cmd = { '\\zig\\zls\\zls.exe' }
+        cmd = { '/zig/zls/zls.exe' }
     }
     lspconfig.ts_ls.setup{}
     lspconfig.asm_lsp.setup{}
@@ -96,3 +96,4 @@ return {
     }
   end
 }
+

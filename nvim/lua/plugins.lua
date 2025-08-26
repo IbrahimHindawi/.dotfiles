@@ -20,15 +20,15 @@ return {
     "startup-nvim/startup.nvim",
     dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim", "nvim-telescope/telescope-file-browser.nvim" },
     config = function()
-      require "startup".setup()
+      require "startup".setup({theme ='devel'})
     end
   },
   'hrsh7th/cmp-nvim-lsp',
   'hrsh7th/cmp-buffer',
   'hrsh7th/cmp-path',
   'hrsh7th/cmp-cmdline',
-  'hrsh7th/cmp-vsnip',
-  'hrsh7th/vim-vsnip',
+  -- 'hrsh7th/cmp-vsnip',
+  -- 'hrsh7th/vim-vsnip',
 
   'ktunprasert/gui-font-resize.nvim',
   'tikhomirov/vim-glsl',
