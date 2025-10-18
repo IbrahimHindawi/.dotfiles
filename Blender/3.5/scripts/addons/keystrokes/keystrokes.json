@@ -1,0 +1,102 @@
+{
+  "binds": [
+    { "keymap": "Object Mode", "key": "Q", "family": "Q" }, { "keymap": "Mesh", "key": "Q", "family": "Q" },
+    { "keymap": "Object Mode", "key": "V", "family": "V" }, { "keymap": "Mesh", "key": "V", "family": "V" },
+    { "keymap": "Object Mode", "key": "F", "family": "F" }, { "keymap": "Mesh", "key": "F", "family": "F" },
+    { "keymap": "Object Mode", "key": "S", "family": "S" }, { "keymap": "Mesh", "key": "S", "family": "S" },
+    { "keymap": "Object Mode", "key": "C", "family": "C" }, { "keymap": "Mesh", "key": "C", "family": "C" },
+    { "keymap": "Object Mode", "key": "Z", "family": "Z" }, { "keymap": "Mesh", "key": "Z", "family": "Z" },
+    { "keymap": "Mesh", "key": "D", "family": "D" },
+    { "keymap": "Mesh", "key": "A", "family": "A" }
+  ],
+  "families": {
+    "Q": {
+      "OBJECT": [
+        { "key": "Q", "label": "Tweak Tool", "operator": "wm.tool_set_by_id", "args": { "name": "builtin.select" }, "icon": "RESTRICT_SELECT_OFF" },
+        { "key": "W", "label": "Select Box", "operator": "wm.tool_set_by_id", "args": { "name": "builtin.select_box" }, "icon": "SELECT_SET" },
+        { "key": "E", "label": "Select Circle", "operator": "wm.tool_set_by_id", "args": { "name": "builtin.select_circle" }, "icon": "SELECT_CIRCLE" },
+        { "key": "R", "label": "Select Lasso", "operator": "wm.tool_set_by_id", "args": { "name": "builtin.select_lasso" }, "icon": "SELECT_LASSO" }
+      ],
+      "EDIT_MESH": [
+        { "key": "Q", "label": "Tweak Tool", "operator": "wm.tool_set_by_id", "args": { "name": "builtin.select" }, "icon": "RESTRICT_SELECT_OFF" },
+        { "key": "W", "label": "Select Box", "operator": "wm.tool_set_by_id", "args": { "name": "builtin.select_box" }, "icon": "SELECT_SET" },
+        { "key": "E", "label": "Select Circle", "operator": "wm.tool_set_by_id", "args": { "name": "builtin.select_circle" }, "icon": "SELECT_CIRCLE" },
+        { "key": "R", "label": "Select Lasso", "operator": "wm.tool_set_by_id", "args": { "name": "builtin.select_lasso" }, "icon": "SELECT_LASSO" }
+      ]
+    },
+
+    "C": {
+      "OBJECT": [
+        { "key": "C", "label": "Merge (Center)", "operator": "mesh.merge", "args": { "type": "CENTER" }, "icon": "AUTOMERGE_OFF" }
+      ],
+      "EDIT_MESH": [
+        { "key": "C", "label": "Merge (Center)", "operator": "mesh.merge", "args": { "type": "CENTER" }, "icon": "AUTOMERGE_OFF" }
+      ]
+    },
+
+    "F": {
+      "OBJECT": [
+        { "key": "F", "label": "Frame Selected", "operator": "view3d.view_selected", "args": { "use_all_regions": false }, "icon": "VIEWZOOM" },
+        { "key": "Q", "label": "Toggle Local View", "operator": "view3d.localview", "args": {}, "icon": "HIDE_OFF" }
+      ],
+      "EDIT_MESH": [
+        { "key": "F", "label": "Frame Selected", "operator": "view3d.view_selected", "args": { "use_all_regions": false }, "icon": "VIEWZOOM" },
+        { "key": "Q", "label": "Toggle Local View", "operator": "view3d.localview", "args": {}, "icon": "HIDE_OFF" }
+      ]
+    },
+
+    "D": { 
+      "EDIT_MESH": [
+        { "key": "S", "label": "Inset", "operator": "mesh.inset", "icon": "MOD_BEVEL" },
+        { "key": "D", "label": "Faces → Extrude Region", "operator": "view3d.edit_mesh_extrude_move_normal", "icon": "MOD_SOLIDIFY" },
+        { "key": "F", "label": "Extrude Along Normals", "operator": "mesh.extrude_region_shrink_fatten", "icon": "NORMALS_FACE" }
+      ]
+    },
+
+    "S": { 
+      "EDIT_MESH": [
+        { "key": "D", "label": "Duplicate (Move)", "operator": "mesh.duplicate_move", "icon": "DUPLICATE" },
+        { "key": "S", "label": "Separate (Selected)", "operator": "mesh.separate", "args": { "type": "SELECTED" }, "icon": "SNAP_FACE_CENTER" }
+      ],
+      "OBJECT": [
+        { "key": "D", "label": "Duplicate Objects", "operator": "object.duplicate_move", "icon": "DUPLICATE" }
+      ]
+    },
+
+    "V": { 
+      "OBJECT": [
+        { "key": "S", "label": "Mirror (Modifier)", "operator": "object.add_modifier_safe", "args": { "type": "MIRROR" }, "icon": "MOD_MIRROR" },
+        { "key": "D", "label": "Subdivision (Modifier)", "operator": "object.add_modifier_safe", "args": { "type": "SUBSURF" }, "icon": "MOD_SUBSURF" },
+        { "key": "X", "label": "Bisect Plane (custom)", "operator": "object.bisect_plane", "icon": "MOD_BOOLEAN" }
+      ],
+      "EDIT_MESH": [
+        { "key": "X", "label": "Bisect Plane (custom)", "operator": "object.bisect_plane", "icon": "MOD_BOOLEAN" },
+        { "key": "S", "label": "Mirror (Modifier)", "operator": "object.add_modifier_safe", "args": { "type": "MIRROR" }, "icon": "MOD_MIRROR" },
+        { "key": "D", "label": "Subdivision (Modifier)", "operator": "object.add_modifier_safe", "args": { "type": "SUBSURF" }, "icon": "MOD_SUBSURF" }
+      ]
+    },
+
+    "A": { 
+      "EDIT_MESH": [
+        { "key": "S", "label": "Edge Loop (Loop Cut / Slide)", "operator": "mesh.loopcut_slide", "icon": "MOD_EDGESPLIT" },
+        { "key": "A", "label": "Knife Tool", "operator": "mesh.knife_tool", "args": { "use_occlude_geometry": true, "only_selected": false }, "icon": "MOD_TRIANGULATE" }
+      ]
+    },
+    "Z": {
+      "OBJECT": [
+        { "key": "Z", "label": "Solid",     "operator": "wm.context_set_enum", "args": { "data_path": "space_data.shading.type", "value": "SOLID" }, "icon": "SHADING_SOLID" },
+        { "key": "X", "label": "Wireframe", "operator": "wm.context_set_enum", "args": { "data_path": "space_data.shading.type", "value": "WIREFRAME" }, "icon": "SHADING_WIRE" },
+        { "key": "C", "label": "Material",  "operator": "wm.context_set_enum", "args": { "data_path": "space_data.shading.type", "value": "MATERIAL" }, "icon": "SHADING_TEXTURE" },
+        { "key": "V", "label": "Rendered",  "operator": "wm.context_set_enum", "args": { "data_path": "space_data.shading.type", "value": "RENDERED" }, "icon": "SHADING_RENDERED" },
+        { "key": "W", "label": "Toggle Wire Overlay", "operator": "wm.context_toggle", "args": { "data_path": "space_data.overlay.show_wireframes" }, "icon": "OVERLAY" }
+      ],
+      "EDIT_MESH": [
+        { "key": "Z", "label": "Solid",     "operator": "wm.context_set_enum", "args": { "data_path": "space_data.shading.type", "value": "SOLID" }, "icon": "SHADING_SOLID" },
+        { "key": "X", "label": "Wireframe", "operator": "wm.context_set_enum", "args": { "data_path": "space_data.shading.type", "value": "WIREFRAME" }, "icon": "SHADING_WIRE" },
+        { "key": "C", "label": "Material",  "operator": "wm.context_set_enum", "args": { "data_path": "space_data.shading.type", "value": "MATERIAL" }, "icon": "SHADING_TEXTURE" },
+        { "key": "V", "label": "Rendered",  "operator": "wm.context_set_enum", "args": { "data_path": "space_data.shading.type", "value": "RENDERED" }, "icon": "SHADING_RENDERED" },
+        { "key": "W", "label": "Toggle Wire Overlay", "operator": "wm.context_toggle", "args": { "data_path": "space_data.overlay.show_wireframes" }, "icon": "OVERLAY" }
+      ]
+    }
+  }
+}
