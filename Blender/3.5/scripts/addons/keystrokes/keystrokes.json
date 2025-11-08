@@ -6,6 +6,7 @@
     { "keymap": "Object Mode", "key": "S", "family": "S" }, { "keymap": "Mesh", "key": "S", "family": "S" },
     { "keymap": "Object Mode", "key": "C", "family": "C" }, { "keymap": "Mesh", "key": "C", "family": "C" },
     { "keymap": "Object Mode", "key": "Z", "family": "Z" }, { "keymap": "Mesh", "key": "Z", "family": "Z" },
+    { "keymap": "Object Mode", "key": "G", "family": "G" }, { "keymap": "Mesh", "key": "G", "family": "G" },
     { "keymap": "Mesh", "key": "D", "family": "D" },
     { "keymap": "Mesh", "key": "A", "family": "A" }
   ],
@@ -22,6 +23,15 @@
         { "key": "W", "label": "Select Box", "operator": "wm.tool_set_by_id", "args": { "name": "builtin.select_box" }, "icon": "SELECT_SET" },
         { "key": "E", "label": "Select Circle", "operator": "wm.tool_set_by_id", "args": { "name": "builtin.select_circle" }, "icon": "SELECT_CIRCLE" },
         { "key": "R", "label": "Select Lasso", "operator": "wm.tool_set_by_id", "args": { "name": "builtin.select_lasso" }, "icon": "SELECT_LASSO" }
+      ]
+    },
+
+    "G": {
+      "OBJECT": [
+        { "key": "A", "label": "Select All", "operator": "object.select_all", "args": { "type": "CENTER" }, "icon": "AUTOMERGE_OFF" }
+      ],
+      "EDIT_MESH": [
+        { "key": "A", "label": "Select All", "operator": "mesh.select_all", "args": { "type": "CENTER" }, "icon": "AUTOMERGE_OFF" }
       ]
     },
 
