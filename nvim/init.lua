@@ -22,16 +22,18 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup('plugins')
 require('nvim-keys')
 vim.cmd.colorscheme 'vscode'
--- If you want icons for diagnostic errors, you'll need to define them somewhere:
-vim.diagnostic.config({ virtual_text = true })
+-- vim.opt_global.conceallevel=2
+vim.diagnostic.config({
+  underline = true,
+  virtual_text = true,
+  signs = true,
+})
 vim.fn.sign_define("DiagnosticSignError", {text = " ", texthl = "DiagnosticSignError"})
 vim.fn.sign_define("DiagnosticSignWarn", {text = " ", texthl = "DiagnosticSignWarn"})
 vim.fn.sign_define("DiagnosticSignInfo", {text = " ", texthl = "DiagnosticSignInfo"})
 vim.fn.sign_define("DiagnosticSignHint", {text = "󰌵", texthl = "DiagnosticSignHint"})
-vim.opt_global.conceallevel=2
--- vim.cmd [[
---   highlight Normal guibg=none
---   highlight NonText guibg=none
---   highlight Normal ctermbg=none
---   highlight NonText ctermbg=none
--- ]]
+
+vim.api.nvim_set_hl(0, "DiagnosticUnderlineError", { underline = true, sp = "#ff0000" })
+vim.api.nvim_set_hl(0, "DiagnosticUnderlineWarn",  { underline = true, sp = "#ffaa00" })
+vim.api.nvim_set_hl(0, "DiagnosticUnderlineInfo",  { underline = true, sp = "#00aaff" })
+vim.api.nvim_set_hl(0, "DiagnosticUnderlineHint",  { underline = true, sp = "#888888" })
