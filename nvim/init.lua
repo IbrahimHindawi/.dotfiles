@@ -37,3 +37,14 @@ vim.api.nvim_set_hl(0, "DiagnosticUnderlineError", { underline = true, sp = "#ff
 vim.api.nvim_set_hl(0, "DiagnosticUnderlineWarn",  { underline = true, sp = "#ffaa00" })
 vim.api.nvim_set_hl(0, "DiagnosticUnderlineInfo",  { underline = true, sp = "#00aaff" })
 vim.api.nvim_set_hl(0, "DiagnosticUnderlineHint",  { underline = true, sp = "#888888" })
+
+-- GLOBAL border for all LSP floating windows
+local orig = vim.lsp.util.open_floating_preview
+
+function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
+  opts = opts or {}
+  opts.border = opts.border or "rounded"   -- or "single", "double", "shadow", etc.
+  return orig(contents, syntax, opts, ...)
+end
+
+-- require("rax.typeprefix").setup()
