@@ -41,7 +41,19 @@ if exist "C:\Program Files (x86)\clink\clink.bat" (
 )
 
 mkdir "%LOCALAPPDATA%\clink" 2>nul
-oh-my-posh init cmd --config "%USERPROFILE%\.dotfiles\themes\velvet.omp.json" > "%LOCALAPPDATA%\clink\oh-my-posh.lua"
+
+where oh-my-posh >nul 2>nul
+if not errorlevel 1 (
+  oh-my-posh init cmd --config "%USERPROFILE%\.dotfiles\themes\velvet.omp.json" > "%LOCALAPPDATA%\clink\oh-my-posh.lua"
+)
+
+where clink >nul 2>nul
+if not errorlevel 1 (
+  clink set autosuggest.enable true
+  clink set autosuggest.inline true
+  clink set autosuggest.strategy history
+  clink set color.suggestion brightblack
+)
 
 set "cleanpath=%USERPROFILE%\AppData\Local\Programs\Python\Python313"
 set "cleanpath=%cleanpath%;%USERPROFILE%\AppData\Local\Programs\Python\Python313\Scripts"
