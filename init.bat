@@ -27,34 +27,13 @@ mkdir C:\devel 2>nul
 "%winget%" install --id Python.Launcher -e
 "%winget%" install --id Rclone.Rclone -e
 "%winget%" install --id chrisant996.Clink -e
-"%winget%" install --id Starship.Starship -e
+"%winget%" install --id JanDeDobbeleer.OhMyPosh -e
 
 "%winget%" install --id Microsoft.VisualStudio.2022.BuildTools -e --override "--wait --norestart --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"
 
-set "fontfound=0"
-
-dir "%LOCALAPPDATA%\Microsoft\Windows\Fonts\*IosevkaTerm*Nerd*Regular*.ttf" >nul 2>nul
-if not errorlevel 1 set "fontfound=1"
-
-dir "C:\Windows\Fonts\*IosevkaTerm*Nerd*Regular*.ttf" >nul 2>nul
-if not errorlevel 1 set "fontfound=1"
-
-if "%fontfound%"=="0" (
-  set "fontzip=%USERPROFILE%\.dotfiles\cache\IosevkaTerm.zip"
-  set "fontdir=%TEMP%\iosevka-term-nerd-font"
-
-  mkdir "%USERPROFILE%\.dotfiles\cache" 2>nul
-  rmdir /S /Q "%fontdir%" 2>nul
-  mkdir "%fontdir%" 2>nul
-
-  if not exist "%fontzip%" (
-    curl.exe -L --progress-bar -o "%fontzip%" "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/IosevkaTerm.zip"
-  )
-
-  powershell -NoProfile -ExecutionPolicy Bypass -Command ^
-    "Expand-Archive '%fontzip%' -DestinationPath '%fontdir%' -Force;" ^
-    "$fonts=(New-Object -ComObject Shell.Application).Namespace(0x14);" ^
-    "Get-ChildItem '%fontdir%' -Filter '*.ttf' | ForEach-Object { $fonts.CopyHere($_.FullName, 0x10) }"
+where oh-my-posh >nul 2>nul
+if not errorlevel 1 (
+  oh-my-posh font install IosevkaTerm
 )
 
 if exist "C:\Program Files (x86)\clink\clink.bat" (
@@ -62,7 +41,7 @@ if exist "C:\Program Files (x86)\clink\clink.bat" (
 )
 
 mkdir "%LOCALAPPDATA%\clink" 2>nul
-echo load(io.popen('starship init cmd'):read("*a"))() > "%LOCALAPPDATA%\clink\starship.lua"
+oh-my-posh init cmd --config "%USERPROFILE%\.dotfiles\themes\velvet.omp.json" > "%LOCALAPPDATA%\clink\oh-my-posh.lua"
 
 set "cleanpath=%USERPROFILE%\AppData\Local\Programs\Python\Python313"
 set "cleanpath=%cleanpath%;%USERPROFILE%\AppData\Local\Programs\Python\Python313\Scripts"
@@ -76,7 +55,7 @@ set "cleanpath=%cleanpath%;C:\Program Files\LLVM\bin"
 set "cleanpath=%cleanpath%;C:\Program Files\CMake\bin"
 set "cleanpath=%cleanpath%;C:\Program Files\nodejs"
 set "cleanpath=%cleanpath%;C:\Program Files (x86)\clink"
-set "cleanpath=%cleanpath%;%LOCALAPPDATA%\Programs\starship\bin"
+set "cleanpath=%cleanpath%;%LOCALAPPDATA%\Programs\oh-my-posh\bin"
 set "cleanpath=%cleanpath%;C:\devel"
 
 setx PATH "%cleanpath%" >nul
