@@ -60,11 +60,16 @@ set "PATH=%ninjadir%;%PATH%"
 where npm >nul 2>nul
 if not errorlevel 1 (
   call npm install -g @openai/codex
+  call npm install -g tree-sitter-cli
 )
 
 where oh-my-posh >nul 2>nul
 if not errorlevel 1 (
-  call oh-my-posh font install IosevkaTerm
+  if not exist "%LOCALAPPDATA%\Microsoft\Windows\Fonts\IosevkaTermNerdFont-Regular.ttf" (
+    call oh-my-posh font install IosevkaTerm
+  ) else (
+    echo SKIP: IosevkaTerm font already installed >> "%log%"
+  )
 )
 
 if exist "C:\Program Files (x86)\clink\clink.bat" (
