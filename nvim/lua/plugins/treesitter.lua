@@ -5,16 +5,18 @@ return {
       config.setup({
         ensure_installed = { "c", "lua", "python" },
         sync_install = false,
-        auto_install = true,
+        auto_install = false,
         -- on_attach = function(client, bufnr)
         --   client.server_capabilities.semanticTokensProvider = nil
         -- end,
         highlight = {
           enable = true,
+          disable = { "markdown", "markdown_inline" },
           -- additional_vim_regex_highlighting = false,
         },
         indent = {
-            enable = true
+            enable = true,
+            disable = { "markdown", "markdown_inline" },
         },
     })
   end

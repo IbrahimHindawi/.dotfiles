@@ -3,6 +3,21 @@
 -- This is also a good place to setup other settings (vim.opt)
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
+
+local treesitter_start = vim.treesitter.start
+
+vim.treesitter.start = function(bufnr, lang)
+  bufnr = bufnr or 0
+  local filetype = vim.bo[bufnr].filetype
+  lang = lang or vim.treesitter.language.get_lang(filetype)
+
+  if lang == "markdown" or lang == "markdown_inline" then
+    return
+  end
+
+  return treesitter_start(bufnr, lang)
+end
+
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then

@@ -34,6 +34,18 @@ mkdir "%USERPROFILE%\.dotfiles\cache" 2>nul
 "%winget%" install --id Rclone.Rclone -e
 "%winget%" install --id chrisant996.Clink -e
 "%winget%" install --id JanDeDobbeleer.OhMyPosh -e
+"%winget%" install --id BurntSushi.ripgrep.MSVC -e
+
+set "wingetlinks=%LOCALAPPDATA%\Microsoft\WinGet\Links"
+mkdir "%wingetlinks%" 2>nul
+
+if not exist "%wingetlinks%\rg.exe" (
+  for /f "delims=" %%F in ('dir /S /B "%LOCALAPPDATA%\Microsoft\WinGet\Packages\BurntSushi.ripgrep.MSVC_*\rg.exe" 2^>nul') do (
+    copy /Y "%%F" "%wingetlinks%\rg.exe" >nul
+    goto :rg_link_done
+  )
+)
+:rg_link_done
 
 "%winget%" install --id Microsoft.VisualStudio.2022.BuildTools -e --override "--wait --norestart --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"
 
