@@ -8,7 +8,7 @@ return {
         ft = "markdown",
         -- conceallevel = 0,
         ui = {
-            enable = true,
+            enable = false,
             checkboxes = {
                 [" "] = { char = "󰄱", hl_group = "ObsidianTodo" },
                 ["x"] = { char = "", hl_group = "ObsidianDone" },

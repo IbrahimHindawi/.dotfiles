@@ -14,7 +14,6 @@ return {
   'Mofiqul/vscode.nvim',
   'ss77a/carbonfox.nvim',
 
-  -- 'MeanderingProgrammer/render-markdown.nvim',
   'nvim-tree/nvim-web-devicons',
   {
     "startup-nvim/startup.nvim",
