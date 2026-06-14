@@ -5,7 +5,7 @@ return {
   build = ':TSUpdate',
   config = function()
     local ts = require('nvim-treesitter')
-    local parsers = { 'c', 'lua', 'python', 'markdown', 'markdown_inline' }
+    local parsers = { 'c', 'lua', 'python', 'markdown', 'markdown_inline', 'hlsl' }
 
     ts.setup({
       install_dir = vim.fn.stdpath('data') .. '/site',
@@ -14,7 +14,7 @@ return {
     ts.install(parsers):wait(300000)
 
     vim.api.nvim_create_autocmd('FileType', {
-      pattern = { 'c', 'lua', 'python', 'markdown' },
+      pattern = { 'c', 'lua', 'python', 'markdown', 'hlsl' },
       callback = function()
         vim.treesitter.start()
       end,
