@@ -1,0 +1,3 @@
+# Shared SSH client config (public). Machine entries live in the private repo
+# (~/.dotfiles-private/ssh/machines), so hostnames and usernames stay out of this one.
+Include ~/.dotfiles-private/ssh/machines

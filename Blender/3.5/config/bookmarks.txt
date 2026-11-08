@@ -1,0 +1,7 @@
+[Bookmarks]
+C:\devel\prototype\
+[Recent]
+C:\devel\prototype\ecor\geo\
+C:\Users\Administrator\Desktop\
+C:\Users\Administrator\Desktop\modelsz\
+C:\mesh_check_gpu_edition\
