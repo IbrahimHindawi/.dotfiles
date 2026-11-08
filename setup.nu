@@ -13,7 +13,6 @@ const TOOLS = [
     Git.Git
     Nushell.Nushell
     JanDeDobbeleer.OhMyPosh
-    wez.wezterm.nightly
     Neovim.Neovim
     BurntSushi.ripgrep.MSVC
 ]
@@ -107,16 +106,8 @@ def write-file [path: string, content: string] {
 
 def install-tools [] {
     step "tools"
-    # nightly replaces stable (the stable build mangles nu's prompt markers); both can't coexist
-    if (winget-installed 'wez.wezterm') {
-        if (ps | where name =~ 'wezterm' | is-not-empty) {
-            warn "WezTerm stable is installed but running; close it and re-run to switch to nightly"
-        } else {
-            ok "wez.wezterm (stable): uninstalling in favor of nightly"
-            do { ^winget uninstall --id wez.wezterm -e --silent --disable-interactivity } | complete | ignore
-        }
-    }
     for id in $TOOLS { winget-install $id }
+    install-wezterm-nightly
     refresh-path
 
     # Claude Code: native installer (self-updating), not the winget package
@@ -141,6 +132,37 @@ def install-tools [] {
 
     # zellij isn't installed here: it's our patched build, copied from the main machine
     if (which zellij | is-empty) { warn "zellij: not found; deploy the build from the main machine" }
+}
+
+# WezTerm nightly from the official installer, not winget: winget can't refresh its
+# index over SSH, and the stable build (20240203) mangles nu's prompt markers.
+# Download first; only then remove stable, so a failed download never leaves no terminal.
+def install-wezterm-nightly [] {
+    let gui = 'C:\Program Files\WezTerm\wezterm-gui.exe'
+    if ($gui | path exists) {
+        let ver = (^powershell -NoProfile -Command $"\(Get-Item '($gui)'\).VersionInfo.ProductVersion" | str trim)
+        if not ($ver starts-with '2024') { ok $"WezTerm nightly: already installed \(($ver)\)"; return }
+    }
+    if (ps | where name =~ 'wezterm' | is-not-empty) {
+        warn "WezTerm is running; close it and re-run to install nightly"
+        return
+    }
+    let dir = ($env.TEMP | path join wezterm-nightly)
+    mkdir $dir
+    let exe = ($dir | path join WezTerm-nightly-setup.exe)
+    ok "WezTerm nightly: downloading"
+    let dl = (do { ^curl.exe -fsSL -o $exe https://github.com/wezterm/wezterm/releases/download/nightly/WezTerm-nightly-setup.exe } | complete)
+    if ($dl.exit_code != 0) or not ($exe | path exists) {
+        warn "WezTerm nightly: download failed; existing WezTerm left untouched"
+        return
+    }
+    if (winget-installed 'wez.wezterm') {
+        ok "WezTerm stable: uninstalling"
+        do { ^winget uninstall --id wez.wezterm -e --silent --disable-interactivity } | complete | ignore
+    }
+    ^$exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP-
+    rm -r $dir
+    if ($gui | path exists) { ok "WezTerm nightly: installed" } else { warn "WezTerm nightly: installer finished but wezterm-gui.exe is missing" }
 }
 
 def install-dev [] {
@@ -241,12 +263,19 @@ def setup-remote [] {
     ^powershell -NoProfile -Command "Set-Service sshd -StartupType Automatic; Start-Service sshd"
 
     # Firewall: only from the machine's own subnet, and only on networks marked Private
-    # (Windows marks unknown networks Public, so cafe Wi-Fi never matches this rule)
+    # (Windows marks unknown networks Public, so cafe Wi-Fi never matches this rule).
+    # If the current network isn't Private, applying it would cut off SSH right now.
+    let categories = (^powershell -NoProfile -Command "(Get-NetConnectionProfile).NetworkCategory" | lines | str trim)
+    if 'Private' not-in $categories {
+        warn "firewall: current network is not marked Private; leaving the existing rule alone"
+        warn "  mark your home network Private (Settings > Network > Properties), then re-run --remote"
+    } else {
     ^powershell -NoProfile -Command ([
         "Get-NetFirewallRule -Name 'OpenSSH-Server-In-TCP' -ErrorAction SilentlyContinue | Remove-NetFirewallRule"
         "New-NetFirewallRule -Name 'OpenSSH-Server-In-TCP' -DisplayName 'OpenSSH Server (sshd)' -Direction Inbound -Protocol TCP -LocalPort 22 -Action Allow -RemoteAddress LocalSubnet -Profile Private | Out-Null"
     ] | str join '; ')
     ok "firewall: port 22 from the local subnet, Private profile only"
+    }
 
     # Trust the main machine's key (from the private repo)
     let key_file = (home '.dotfiles-private/ssh/main.pub')
