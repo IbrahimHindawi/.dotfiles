@@ -319,10 +319,16 @@ def setup-remote [] {
         }
     }
 
-    # nu as the SSH login shell
-    let nu_exe = ($env.LOCALAPPDATA | path join Programs nu bin nu.exe)
-    ^reg add 'HKLM\SOFTWARE\OpenSSH' /v DefaultShell /t REG_SZ /d $nu_exe /f | ignore
-    ^reg add 'HKLM\SOFTWARE\OpenSSH' /v DefaultShellCommandOption /t REG_SZ /d '-c' /f | ignore
-    ok $"SSH login shell: ($nu_exe)"
-    warn "restart sshd to apply (Restart-Service sshd -Force); open sessions survive it"
+    # SSH login shell stays cmd, on purpose: nu runs external commands inside a Windows
+    # job object that kills them all when nu exits, so a zellij server started over an
+    # nu-shell SSH session dies on disconnect. zellij panes still run nu (default_shell).
+    let shell = (do { ^reg query 'HKLM\SOFTWARE\OpenSSH' /v DefaultShell } | complete)
+    if ($shell.exit_code == 0) and ($shell.stdout =~ 'nu\.exe') {
+        do { ^reg delete 'HKLM\SOFTWARE\OpenSSH' /v DefaultShell /f } | complete | ignore
+        do { ^reg delete 'HKLM\SOFTWARE\OpenSSH' /v DefaultShellCommandOption /f } | complete | ignore
+        ok "SSH login shell: reset to cmd (nu kills zellij servers on disconnect)"
+    } else {
+        ok "SSH login shell: cmd"
+    }
+    warn "if sshd settings changed, restart it: Restart-Service sshd -Force (open sessions survive)"
 }

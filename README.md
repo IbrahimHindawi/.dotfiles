@@ -64,13 +64,18 @@ One main machine (the only one that SSHes out) drives the others through nested 
 
 Machines are defined in the private repo, in `~/.dotfiles-private/ssh/machines`. Each `Host` block is a machine, and its `Host` name is the nickname (e.g. `blade`).
 
-Connect to a machine:
+Each machine has one shared, **mirrored** zellij session called `main`. Every screen attached to it follows the same tab and pane, so work driven from the main machine shows live on that machine's own display:
 
 ```
-ssh -t blade zellij attach -c main options --support-kitty-keyboard-protocol false
+zr blade    # from the main machine (nu command, in config.nu)
+zm          # on the machine itself, e.g. the laptop's screen
 ```
 
-Then press `Ctrl+G` to lock the outer zellij and drive the remote one; press `Ctrl+G` again to come back.
+Then press `Ctrl+G` to lock the outer zellij and drive the remote one; press `Ctrl+G` again to come back. The session keeps running on the machine when you disconnect.
+
+Use `zellij options --session-name main ...`, not `zellij attach main options ...`: the latter silently creates a randomly named session.
+
+**SSH login shell stays cmd.** nu runs external commands inside a Windows job object that kills them all when nu exits. With nu as the SSH shell, a zellij server started over SSH dies on disconnect. Panes inside zellij still run nu.
 
 ### Windows 10 workers
 
@@ -113,7 +118,7 @@ nu setup.nu --remote     # fleet workers only: SSH server
   - firewall: home LAN, Private network profile only
   - main machine's key, taken from the private repo
   - key-only logins
-  - nu as the SSH shell
+  - keeps cmd as the SSH login shell (see Fleet)
 - **zellij** isn't installed by setup: it's the patched build, copied from the main machine.
 
 Still to build:
