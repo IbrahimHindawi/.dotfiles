@@ -291,7 +291,7 @@ def setup-remote [] {
         }
         ^icacls 'C:\ProgramData\ssh\administrators_authorized_keys' /inheritance:r /grant '*S-1-5-32-544:F' /grant '*S-1-5-18:F' | ignore
     } else {
-        warn $"($key_file) not found (private repo not cloned); skipping key install"
+        warn $"($key_file) not found \(private repo not cloned\); skipping key install"
     }
 
     # Key-only logins; validate before restarting so a bad edit can't lock us out
