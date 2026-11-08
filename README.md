@@ -2,7 +2,7 @@
 
 Windows dev environment: **nushell** in **WezTerm (nightly)**, with **zellij** for tabs, panes and sessions, plus a small fleet of machines driven from one main machine over SSH.
 
-> **Status:** in transition. The old `init.bat` is being replaced by `bootstrap.bat` + `setup.nu`, which aren't written yet. Until then, configs on the main machine are wired up by hand as described below.
+> **Status:** in transition. `setup.nu` replaces the old `init.bat`; `bootstrap.bat` (the one-step entry point for new machines) isn't written yet.
 
 ## Layout
 
@@ -78,7 +78,7 @@ Windows 10's console layer mangles modern escape sequences in both directions, s
 - **Kitty keyboard protocol must be off** for the remote zellij, or key combos are dropped. The connect command above handles that.
 - **Automatic nested-session detection doesn't work**, so use manual lock (`Ctrl+G`). Its announcement shows up briefly as `26661nCgo...` text when you connect; that's harmless.
 
-### Worker setup (manual for now, later `setup.nu --remote`)
+### Worker setup (what `setup.nu --remote` does)
 
 - **OpenSSH server:** `Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0`, then start it and set it to start automatically.
 - **Firewall:** port 22 allowed only from the home LAN subnet.
@@ -87,21 +87,40 @@ Windows 10's console layer mangles modern escape sequences in both directions, s
 
 Headless machines need an **HDMI/DisplayPort dummy plug** (4K@60, matched to a free GPU port) and auto-login, so games and screen recording have a real display and desktop.
 
-## Planned setup (replaces `init.bat`)
+## Setup (replaces `init.bat`)
 
-- **`bootstrap.bat`:** the double-click entry point. It elevates once, installs git and nu, clones this repo and runs `setup.nu`.
-- **`setup.nu --tools`:** installs via winget:
-  - WezTerm nightly, IosevkaTerm Nerd Font, nu, oh-my-posh, git
-  - LLVM, CMake, ninja, VS Build Tools (C++), Rust
-  - Node LTS, Python 3.13, rclone, ripgrep
+`setup.nu` is idempotent: every step checks first, so re-running it is safe. Run it elevated:
+
+```
+nu setup.nu              # --tools --dev --configs
+nu setup.nu --remote     # fleet workers only: SSH server
+```
+
+- **`--tools`:**
+  - via winget: git, nu, oh-my-posh, WezTerm nightly (replaces stable), Neovim, ripgrep
+  - Claude Code via its native installer, which updates itself
+  - IosevkaTerm Nerd Font
+- **`--dev`:**
+  - via winget: LLVM, CMake, ninja, Rust, Node LTS, Python 3.13, rclone
+  - VS 18 Build Tools (C++ workload)
   - npm globals: Codex, tree-sitter-cli
-  - zellij from the fork
-- **`setup.nu --configs`:** creates the pointers above, and **appends** to PATH (never overwrites it).
-- **`setup.nu --remote`:** OpenSSH server, firewall, main machine's key, nu as the SSH shell.
-- **Later:**
-  - a fleet layout (`ze fleet`)
-  - `on-all` and `zellij-deploy` commands
-  - Tailscale, for reaching machines off the home network
+- **`--configs`:**
+  - creates the pointers above, plus an nvim junction
+  - removes a stale Clink AutoRun
+  - **appends** to PATH, never overwrites it
+- **`--remote`:**
+  - OpenSSH server
+  - firewall: home LAN, Private network profile only
+  - main machine's key, taken from the private repo
+  - key-only logins
+  - nu as the SSH shell
+- **zellij** isn't installed by setup: it's the patched build, copied from the main machine.
+
+Still to build:
+- `bootstrap.bat`: elevate, install git + nu, clone, run `setup.nu`
+- a fleet layout (`ze fleet`)
+- `on-all` and `zellij-deploy` commands
+- Tailscale, for reaching machines off the home network
 
 Notes:
 - clang-cl + CMake + Ninja build fine without the MSVC dev environment (no `vcvars`), so no shell wrapper is needed.
