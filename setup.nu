@@ -110,6 +110,15 @@ def install-tools [] {
     install-wezterm-nightly
     refresh-path
 
+    # winget skips anything already installed, so an old oh-my-posh stays old (v24 ignores
+    # the theme's `options` block and hides the `>`). Its own updater works over SSH too.
+    if (which oh-my-posh | is-not-empty) {
+        let before = (^oh-my-posh version | str trim)
+        do { ^oh-my-posh upgrade } | complete | ignore
+        let after = (^oh-my-posh version | str trim)
+        if $before == $after { ok $"oh-my-posh: ($after), up to date" } else { ok $"oh-my-posh: upgraded ($before) -> ($after)" }
+    }
+
     # Claude Code: native installer (self-updating), not the winget package
     if (home '.local/bin/claude.exe' | path exists) {
         ok "claude: already installed"
@@ -224,6 +233,17 @@ def link-configs [] {
         }
         ^cmd /c mklink /J $nvim $target | ignore
         ok $"($nvim): junction -> ($target)"
+    }
+
+    # GitHub over SSH when this machine's key is registered there: Windows Credential
+    # Manager (git's default helper) is unreachable from SSH logins, so https clones
+    # driven remotely fail with "Unable to persist credentials". Rewrite https -> ssh.
+    let gh = (do { ^ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=accept-new -T git@github.com } | complete)
+    if ($gh.stderr =~ 'successfully authenticated') {
+        ^git config --global 'url.git@github.com:.insteadOf' 'https://github.com/'
+        ok "git: GitHub https URLs go through this machine's SSH key"
+    } else {
+        ok "git: no GitHub SSH key on this machine; https clones use the credential manager"
     }
 
     # Drop a stale Clink AutoRun (cmd complains on every start when its target is gone)
