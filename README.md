@@ -2,7 +2,7 @@
 
 Windows dev environment: **nushell** in **WezTerm (nightly)**, with **zellij** for tabs, panes and sessions, plus a small fleet of machines driven from one main machine over SSH.
 
-> **Status:** in transition. `setup.nu` replaces the old `init.bat`; `bootstrap.bat` (the one-step entry point for new machines) isn't written yet.
+> **Status:** in transition. `bootstrap.bat` + `setup.nu` replace the old `init.bat`, `init.sh` and `init_nvim.bat`, which are kept for reference only.
 
 ## Layout
 
@@ -18,7 +18,9 @@ Windows dev environment: **nushell** in **WezTerm (nightly)**, with **zellij** f
 | `scripts/` | AutoHotkey scripts (escape remap, transparency, borders, hide title bar) |
 | `Blender/`, `Zbrush/` | app configs |
 | `cache/` | download cache, git-ignored |
-| `init.bat`, `init.sh`, `init_nvim.bat` | **legacy**, to be replaced (see below) |
+| `bootstrap.bat` | new-machine entry point: elevates, installs git + nu, clones this repo, runs `setup.nu` |
+| `setup.nu` | the actual setup (see below) |
+| `init.bat`, `init.sh`, `init_nvim.bat` | **legacy**, don't use |
 
 ## Private repo
 
@@ -92,13 +94,25 @@ Windows 10's console layer mangles modern escape sequences in both directions, s
 
 Headless machines need an **HDMI/DisplayPort dummy plug** (4K@60, matched to a free GPU port) and auto-login, so games and screen recording have a real display and desktop.
 
-## Setup (replaces `init.bat`)
+## Setup
 
-`setup.nu` is idempotent: every step checks first, so re-running it is safe. Run it elevated:
+### New machine
+
+Download [`bootstrap.bat`](https://raw.githubusercontent.com/IbrahimHindawi/.dotfiles/main/bootstrap.bat) and run it. It asks for admin rights, installs git and nushell with winget, clones this repo to `~/.dotfiles` (or fast-forwards an existing clone), then runs `setup.nu`. Arguments are passed through:
 
 ```
-nu setup.nu              # --tools --dev --configs
-nu setup.nu --remote     # fleet workers only: SSH server
+bootstrap.bat              # --tools --dev --configs
+bootstrap.bat --remote     # fleet workers only: SSH server
+```
+
+For a fleet worker, clone the private repo to `~/.dotfiles-private` first (it needs GitHub access), so `--remote` can install the main machine's key and `~/.ssh/config` finds the machine list. Without it those steps warn and skip.
+
+### Re-running
+
+Both scripts are idempotent: every step checks first, so re-running is safe. Once the repo is cloned, run `setup.nu` directly from an elevated terminal:
+
+```
+nu ~/.dotfiles/setup.nu [--tools] [--dev] [--configs] [--remote]
 ```
 
 - **`--tools`:**
@@ -122,7 +136,6 @@ nu setup.nu --remote     # fleet workers only: SSH server
 - **zellij** isn't installed by setup: it's the patched build, copied from the main machine.
 
 Still to build:
-- `bootstrap.bat`: elevate, install git + nu, clone, run `setup.nu`
 - a fleet layout (`ze fleet`)
 - `on-all` and `zellij-deploy` commands
 - Tailscale, for reaching machines off the home network
