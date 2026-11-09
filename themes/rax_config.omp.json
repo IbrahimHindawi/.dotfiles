@@ -40,6 +40,9 @@
           ],
           "background": "transparent",
           "template": " >",
+          "properties": {
+            "always_enabled": true
+          },
           "options": {
             "always_enabled": true
           }
