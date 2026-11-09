@@ -63,7 +63,7 @@ The fork is [`IbrahimHindawi/zellij`](https://github.com/IbrahimHindawi/zellij):
 ```
 git checkout rax
 $env.RUSTFLAGS = "-C target-feature=+crt-static"
-cargo xtask ci build-release      # -> targetelease\zellij.exe
+cargo xtask ci build-release      # -> targeteleasezellij.exe
 ```
 
 ## Fleet
