@@ -49,7 +49,7 @@ Junctions or symlinks are only for programs with no pointer mechanism (e.g. the 
 - **`omp-fixups.nu`** is appended to that hook. It strips the leading newline and the window-title escape from the prompt, then prints them once per prompt instead.
 - `env.nu` also patches a type bug in oh-my-posh 29.x's nu script (duration string assigned to an int), which nu 0.116 rejects.
 - **Commands:** `ze` (zellij), `dbg <exe> [args]` (debug in Visual Studio; finds `devenv.exe` via vswhere).
-- WezTerm must be **nightly**. The last stable release (20240203) adds a line per keystroke with nu's OSC 133 prompt markers.
+- WezTerm must be **nightly**. The last stable release (20240203) adds a line per keystroke with nu's OSC 133 prompt markers. Setup installs the **portable** nightly zip to `%LOCALAPPDATA%\Programs\WezTerm` (no admin, no installer) with a Start menu shortcut.
 - cmd + Clink remain installed as a fallback for now.
 
 ## zellij
@@ -58,7 +58,13 @@ Runs a build of upstream `main` with local patches, instead of the 0.45.1 releas
 - **Windows session-rename hang:** fixed upstream on `main` (#5513), but not yet released.
 - **Pipe pairing:** a local patch. The server paired each client's command and reply pipes by arrival order; one half-connected client desynced it for good. The patch pairs them by client process ID.
 
-Plan: maintain a fork (`main` mirrors upstream, `rax` carries the patches), build locally on a dev machine, and copy the binary to the other machines over SSH. Builds need Rust, VS (MSVC), protoc, and Strawberry Perl + NASM for the vendored OpenSSL.
+The fork is [`IbrahimHindawi/zellij`](https://github.com/IbrahimHindawi/zellij): `main` mirrors upstream, `rax` carries the patches. No CI: build locally, then publish `zellij.exe` plus its `zellij.exe.sha256` as a new release, and every machine picks it up on its next `setup.nu --tools`. Builds need Rust, VS (MSVC), protoc, and Strawberry Perl + NASM for the vendored OpenSSL:
+
+```
+git checkout rax
+$env.RUSTFLAGS = "-C target-feature=+crt-static"
+cargo xtask ci build-release      # -> targetelease\zellij.exe
+```
 
 ## Fleet
 
@@ -116,7 +122,9 @@ nu ~/.dotfiles/setup.nu [--tools] [--dev] [--configs] [--remote]
 ```
 
 - **`--tools`:**
-  - via winget: git, nu, oh-my-posh, WezTerm nightly (replaces stable), Neovim, ripgrep
+  - via winget: git, nu, oh-my-posh, Neovim, ripgrep
+  - WezTerm nightly, portable zip; re-runs update it when the nightly changes (close WezTerm first)
+  - zellij: our patched build, from the latest release on the fork ([`IbrahimHindawi/zellij`](https://github.com/IbrahimHindawi/zellij/releases), branch `rax`); re-runs update it when the release changes
   - Claude Code via its native installer, which updates itself
   - IosevkaTerm Nerd Font
 - **`--dev`:**
@@ -133,7 +141,6 @@ nu ~/.dotfiles/setup.nu [--tools] [--dev] [--configs] [--remote]
   - main machine's key, taken from the private repo
   - key-only logins
   - keeps cmd as the SSH login shell (see Fleet)
-- **zellij** isn't installed by setup: it's the patched build, copied from the main machine.
 
 Still to build:
 - a fleet layout (`ze fleet`)

@@ -139,39 +139,87 @@ def install-tools [] {
         warn "IosevkaTerm Nerd Font: oh-my-posh not on PATH yet; re-run to install the font"
     }
 
-    # zellij isn't installed here: it's our patched build, copied from the main machine
-    if (which zellij | is-empty) { warn "zellij: not found; deploy the build from the main machine" }
+    install-zellij
 }
 
-# WezTerm nightly from the official installer, not winget: winget can't refresh its
-# index over SSH, and the stable build (20240203) mangles nu's prompt markers.
-# Download first; only then remove stable, so a failed download never leaves no terminal.
-def install-wezterm-nightly [] {
-    let gui = 'C:\Program Files\WezTerm\wezterm-gui.exe'
-    if ($gui | path exists) {
-        let ver = (^powershell -NoProfile -Command $"\(Get-Item '($gui)'\).VersionInfo.ProductVersion" | str trim)
-        if not ($ver starts-with '2024') { ok $"WezTerm nightly: already installed \(($ver)\)"; return }
-    }
-    if (ps | where name =~ 'wezterm' | is-not-empty) {
-        warn "WezTerm is running; close it and re-run to install nightly"
+# zellij: our patched Windows build, published by hand as a release on the fork (built
+# locally, no CI). Compare against the release's sha256 so re-runs only download on change.
+const ZELLIJ_RELEASE = 'https://github.com/IbrahimHindawi/zellij/releases/latest/download'
+def install-zellij [] {
+    let dir = ($env.LOCALAPPDATA | path join Programs zellij)
+    let exe = ($dir | path join zellij.exe)
+    let sha = (do { ^curl.exe -fsSL $"($ZELLIJ_RELEASE)/zellij.exe.sha256" } | complete)
+    if $sha.exit_code != 0 { warn "zellij: couldn't reach the fork's release; skipped"; return }
+    let want = ($sha.stdout | split row ' ' | first | str trim)
+    if ($exe | path exists) and ((open --raw $exe | hash sha256) == $want) {
+        ok "zellij: up to date"
         return
     }
-    let dir = ($env.TEMP | path join wezterm-nightly)
     mkdir $dir
-    let exe = ($dir | path join WezTerm-nightly-setup.exe)
-    ok "WezTerm nightly: downloading"
-    let dl = (do { ^curl.exe -fsSL -o $exe https://github.com/wezterm/wezterm/releases/download/nightly/WezTerm-nightly-setup.exe } | complete)
-    if ($dl.exit_code != 0) or not ($exe | path exists) {
-        warn "WezTerm nightly: download failed; existing WezTerm left untouched"
+    let tmp = $"($exe).download"
+    ok "zellij: downloading the fork's latest release"
+    let dl = (do { ^curl.exe -fsSL -o $tmp $"($ZELLIJ_RELEASE)/zellij.exe" } | complete)
+    if ($dl.exit_code != 0) or ((open --raw $tmp | hash sha256) != $want) {
+        rm -f $tmp
+        warn "zellij: download failed or checksum mismatch; existing install left untouched"
         return
     }
-    if (winget-installed 'wez.wezterm') {
-        ok "WezTerm stable: uninstalling"
-        do { ^winget uninstall --id wez.wezterm -e --silent --disable-interactivity } | complete | ignore
+    # A running exe can't be overwritten but can be renamed, so live sessions keep running.
+    if ($exe | path exists) {
+        let old = $"($exe).old"
+        rm -f $old
+        mv $exe $old
     }
-    ^$exe /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP-
-    rm -r $dir
-    if ($gui | path exists) { ok "WezTerm nightly: installed" } else { warn "WezTerm nightly: installer finished but wezterm-gui.exe is missing" }
+    mv $tmp $exe
+    ok $"zellij: installed \(($exe)\)"
+}
+
+# WezTerm nightly, portable zip: per-user, no admin, no installer (the setup.exe needs
+# elevation and fails while WezTerm runs). Stable (20240203) mangles nu's prompt markers.
+# The nightly release is rebuilt in place; its asset's updated_at is the version stamp.
+const WEZTERM_ZIP = 'WezTerm-windows-nightly.zip'
+def install-wezterm-nightly [] {
+    let dir = ($env.LOCALAPPDATA | path join Programs WezTerm)
+    let stamp_file = ($dir | path join .nightly-stamp)
+    let rel = (do { ^curl.exe -fsSL https://api.github.com/repos/wezterm/wezterm/releases/tags/nightly } | complete)
+    if $rel.exit_code != 0 {
+        if ($dir | path join wezterm-gui.exe | path exists) { ok "WezTerm nightly: installed (couldn't check for updates)" } else { warn "WezTerm nightly: couldn't reach GitHub; skipped" }
+        return
+    }
+    let asset = ($rel.stdout | from json | get assets | where name == $WEZTERM_ZIP | first)
+    let have = (if ($stamp_file | path exists) { open --raw $stamp_file | str trim } else { '' })
+    if ($have == $asset.updated_at) and ($dir | path join wezterm-gui.exe | path exists) {
+        ok $"WezTerm nightly: up to date \(($asset.updated_at)\)"
+    } else if ($dir | path exists) and (ps | where name =~ '^wezterm' | is-not-empty) {
+        warn "WezTerm nightly: update available; close WezTerm and re-run (its files are in use)"
+    } else {
+        let tmp = ($env.TEMP | path join wezterm-nightly)
+        rm -rf $tmp
+        mkdir $tmp
+        let zip = ($tmp | path join $WEZTERM_ZIP)
+        ok "WezTerm nightly: downloading"
+        let dl = (do { ^curl.exe -fsSL -o $zip $asset.browser_download_url } | complete)
+        # Windows' own bsdtar unzips; Git's GNU tar (often earlier on PATH) can't
+        let ex = (if $dl.exit_code == 0 { do { ^($env.SystemRoot | path join System32 tar.exe) -xf $zip -C $tmp } | complete } else { $dl })
+        let inner = (ls $tmp | where type == dir | get -o 0.name)
+        if ($ex.exit_code != 0) or ($inner == null) {
+            warn "WezTerm nightly: download or unzip failed; existing install left untouched"
+        } else {
+            rm -rf $dir
+            mkdir ($dir | path dirname)
+            mv $inner $dir
+            $asset.updated_at | save --force $stamp_file
+            ok $"WezTerm nightly: installed \(($inner | path basename)\)"
+        }
+        rm -rf $tmp
+    }
+    # Start menu shortcut, so it can be launched like an installed app
+    let lnk = ($env.APPDATA | path join Microsoft Windows 'Start Menu' Programs WezTerm.lnk)
+    let gui = ($dir | path join wezterm-gui.exe)
+    if ($gui | path exists) and not ($lnk | path exists) {
+        ^powershell -NoProfile -Command $"$s = \(New-Object -ComObject WScript.Shell\).CreateShortcut\('($lnk)'\); $s.TargetPath = '($gui)'; $s.Save\(\)"
+        ok "WezTerm: Start menu shortcut created"
+    }
 }
 
 def install-dev [] {
@@ -261,6 +309,7 @@ def link-configs [] {
         (home '.local/bin')
         (home '.cargo/bin')
         ($env.LOCALAPPDATA | path join Programs zellij)
+        ($env.LOCALAPPDATA | path join Programs WezTerm)
     ]
     let current = (^powershell -NoProfile -Command "[Environment]::GetEnvironmentVariable('Path','User')" | str trim | split row ';' | where {|p| $p != '' })
     let missing = ($wanted | where {|p| $p not-in $current })
