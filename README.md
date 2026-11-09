@@ -20,6 +20,7 @@ Windows dev environment: **nushell** in **WezTerm (nightly)**, with **zellij** f
 | `cache/` | download cache, git-ignored |
 | `bootstrap.bat` | new-machine entry point: elevates, installs git + nu, clones this repo, runs `setup.nu` |
 | `setup.nu` | the actual setup (see below) |
+| `zellij-release.nu` | builds our zellij fork and publishes it as a GitHub release (see zellij) |
 | `init.bat`, `init.sh`, `init_nvim.bat` | **legacy**, don't use |
 
 ## Private repo
@@ -58,13 +59,13 @@ Runs a build of upstream `main` with local patches, instead of the 0.45.1 releas
 - **Windows session-rename hang:** fixed upstream on `main` (#5513), but not yet released.
 - **Pipe pairing:** a local patch. The server paired each client's command and reply pipes by arrival order; one half-connected client desynced it for good. The patch pairs them by client process ID.
 
-The fork is [`IbrahimHindawi/zellij`](https://github.com/IbrahimHindawi/zellij): `main` mirrors upstream, `rax` carries the patches. No CI: build locally, then publish `zellij.exe` plus its `zellij.exe.sha256` as a new release, and every machine picks it up on its next `setup.nu --tools`. Builds need Rust, VS (MSVC), protoc, and Strawberry Perl + NASM for the vendored OpenSSL:
+The fork is [`IbrahimHindawi/zellij`](https://github.com/IbrahimHindawi/zellij): `main` mirrors upstream, `rax` carries the patches. No CI: `zellij-release.nu` builds a checkout of `rax` locally and publishes `zellij.exe` plus its `zellij.exe.sha256` as the next release (`v<version>-rax.<n>`); every machine picks it up on its next `setup.nu --tools`.
 
 ```
-git checkout rax
-$env.RUSTFLAGS = "-C target-feature=+crt-static"
-cargo xtask ci build-release      # -> target\release\zellij.exe
+nu ~/.dotfiles/zellij-release.nu <path-to-zellij-checkout>
 ```
+
+It refuses to run with uncommitted changes, pushes `rax` first, and needs on PATH: Rust, VS (MSVC), protoc, `gh` (logged in), and Strawberry Perl + NASM for the vendored OpenSSL.
 
 ## Fleet
 
@@ -104,7 +105,13 @@ Headless machines need an **HDMI/DisplayPort dummy plug** (4K@60, matched to a f
 
 ### New machine
 
-Download [`bootstrap.bat`](https://raw.githubusercontent.com/IbrahimHindawi/.dotfiles/main/bootstrap.bat) and run it. It asks for admin rights, installs git and nushell with winget, clones this repo to `~/.dotfiles` (or fast-forwards an existing clone), then runs `setup.nu`. Arguments are passed through:
+Download [`bootstrap.bat`](https://raw.githubusercontent.com/IbrahimHindawi/.dotfiles/main/bootstrap.bat) and run it, or in one line from cmd:
+
+```
+curl -fsSLo %TEMP%\bootstrap.bat https://raw.githubusercontent.com/IbrahimHindawi/.dotfiles/main/bootstrap.bat && %TEMP%\bootstrap.bat
+```
+
+It asks for admin rights, installs git and nushell with winget, clones this repo to `~/.dotfiles` (or fast-forwards an existing clone), then runs `setup.nu`. Arguments are passed through:
 
 ```
 bootstrap.bat              # --tools --dev --configs
